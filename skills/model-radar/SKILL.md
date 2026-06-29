@@ -20,12 +20,18 @@ and emits JSON for the agent to render as a markdown table.
 - Run all commands from this skill directory (the one containing this file)
 - First run populates the cache from the network; subsequent calls hit the
   local cache (models TTL 6h, rankings TTL 24h)
+- Self-updates are enabled by default. Each CLI run checks the fixed GitHub
+  source at most once every 24h and applies updates automatically for installed
+  copies. Set `MODEL_RADAR_AUTO_UPDATE=0` to disable.
 
 ## Workflow
 
+0. Run `node scripts/self-update.js auto` before using the skill. If stderr
+   prints `MODEL_RADAR_UPDATED`, re-read this `SKILL.md` before continuing.
 1. Parse the user's request into `token:value` arguments using the **Intent → Token** mapping below
 2. Pick the command: `list` (filter+sort), `recommend` (weighted score against a preset), `compare` (side-by-side)
-3. Run from the skill directory
+3. Run from the skill directory. `scripts/main.js` also runs the same self-update
+   preflight automatically, so direct CLI usage stays current.
 4. Render the JSON output as a **markdown table** (see [Output](#output))
 5. End with `Data as of {fetched_at}`; suggest `refresh` if older than 12h
 
@@ -36,7 +42,25 @@ node scripts/main.js list      [tokens...]    # filter + sort
 node scripts/main.js recommend [tokens...]    # weighted score against a preset
 node scripts/main.js compare   <id|name>...   # side-by-side comparison
 node scripts/main.js refresh                  # force-refresh both caches
+node scripts/self-update.js status            # inspect update state
+node scripts/self-update.js check             # check GitHub for updates
+node scripts/self-update.js apply             # apply the latest skill update
 ```
+
+## Self-Update
+
+- Source is fixed by `package.json.repository`: `primexiao/agent-skills`, path
+  `skills/model-radar`.
+- Installed copies update automatically. Source checkouts skip auto-update unless
+  `MODEL_RADAR_AUTO_UPDATE_SOURCE=1` is set.
+- Local uncommitted changes under the skill directory cause auto-update to skip.
+- Direct `scripts/main.js` usage restarts the current command after a successful
+  self-update so the result is produced by the updated code.
+- Updates use a temp checkout, validate required files, back up the current skill,
+  replace non-runtime files, and roll back on failure.
+- Successful updates clear `cache/raw.json`, `cache/models.json`, and
+  `cache/rankings.json` so new code does not mix with old data cache.
+- Self-update status and warnings go to stderr. Command JSON stays on stdout.
 
 ## Token Syntax
 
@@ -149,11 +173,16 @@ config/
 - Cache files live under `cache/` and are **not committed** — first run hits the network
 - On TTL expiry, the CLI refetches with a 10s timeout
 - On any fetch failure, it falls back to the stale cache and emits `[warn]` on stderr — so read-only / offline sandboxes still answer (possibly stale)
+- A successful skill self-update deletes the model-data cache files. The next
+  model command repopulates them.
 
 ## Sandbox Notes
 
 - **Codex CLI:** needs `-s workspace-write` (CLI writes to `cache/`) and network egress to `openrouter.ai`. Within TTL, no network calls.
 - **First call in a fresh checkout** is the only one that strictly requires network.
+- Self-update needs filesystem write access to this skill directory and network
+  access to GitHub. If unavailable, it warns or skips and the model command still
+  runs with the current local copy.
 
 ## Known Issues
 

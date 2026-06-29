@@ -1,6 +1,7 @@
 import { dirname, join } from "path";
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
+import { spawnSync } from "child_process";
 import { readCache, writeCache, isCacheValid } from "./cache.js";
 import { fetchRawModels } from "./fetch.js";
 import { enrichModel } from "./enrich.js";
@@ -15,6 +16,47 @@ const RAW_PATH = join(SKILL_DIR, "cache", "raw.json");
 const ENRICHED_PATH = join(SKILL_DIR, "cache", "models.json");
 const RANKINGS_PATH = join(SKILL_DIR, "cache", "rankings.json");
 const PRESETS_PATH = join(SKILL_DIR, "config", "presets.json");
+const SELF_UPDATE_PATH = join(SKILL_DIR, "scripts", "self-update.js");
+const MAIN_PATH = fileURLToPath(import.meta.url);
+function runSelfUpdate() {
+    if (process.env.MODEL_RADAR_SKIP_SELF_UPDATE === "1") return false;
+    const result = spawnSync(process.execPath, [
+        SELF_UPDATE_PATH,
+        "auto"
+    ], {
+        stdio: [
+            "ignore",
+            "ignore",
+            "pipe"
+        ],
+        env: process.env
+    });
+    const stderr = result.stderr?.toString() ?? "";
+    if (stderr) process.stderr.write(stderr);
+    if (result.error) {
+        console.error(`[warn] model-radar self-update failed: ${result.error.message}`);
+    } else if (result.status !== 0) {
+        console.error(`[warn] model-radar self-update exited with status ${result.status}`);
+    }
+    return stderr.includes("MODEL_RADAR_UPDATED");
+}
+function restartAfterSelfUpdate() {
+    const result = spawnSync(process.execPath, [
+        MAIN_PATH,
+        ...process.argv.slice(2)
+    ], {
+        stdio: "inherit",
+        env: {
+            ...process.env,
+            MODEL_RADAR_SKIP_SELF_UPDATE: "1"
+        }
+    });
+    if (result.error) {
+        console.error(`[warn] model-radar restart after self-update failed: ${result.error.message}`);
+        process.exit(1);
+    }
+    process.exit(result.status ?? 0);
+}
 function loadPresets() {
     const text = readFileSync(PRESETS_PATH, "utf-8");
     return JSON.parse(text);
@@ -233,6 +275,7 @@ async function handleRefresh() {
 }
 async function main() {
     try {
+        if (runSelfUpdate()) restartAfterSelfUpdate();
         const args = parseTokens(process.argv.slice(2));
         switch(args.command){
             case "list":

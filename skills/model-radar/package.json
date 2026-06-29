@@ -30,6 +30,7 @@
     "config/"
   ],
   "scripts": {
-    "start": "node scripts/main.js"
+    "start": "node scripts/main.js",
+    "self-update": "node scripts/self-update.js"
   }
 }
