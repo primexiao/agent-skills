@@ -1,0 +1,57 @@
+{
+  "_meta": {
+    "source": "OpenRouter frontend API .data.categories",
+    "purpose": "Tier 1 scenario taxonomy. Synonyms feed SKILL.md analyze step 4a for project-scenario detection. README/docs reference for community.",
+    "note": "Synonyms are hints for AI scenario detection, not authoritative mappings. Claude may fall back to Tier 2 (capability-based) when synonyms are ambiguous."
+  },
+  "categories": {
+    "academia": {
+      "description": "Academic research, paper writing, citation analysis, scientific reasoning over literature",
+      "synonyms": ["academic", "research", "paper", "scholar", "citation", "thesis", "literature", "学术", "论文", "研究"]
+    },
+    "finance": {
+      "description": "Financial analysis, trading strategies, market reports, accounting, risk modeling",
+      "synonyms": ["finance", "trading", "fintech", "investment", "accounting", "stock", "portfolio", "金融", "财务", "交易"]
+    },
+    "health": {
+      "description": "Clinical reasoning, medical Q&A, patient triage, drug interactions, medical record summarization",
+      "synonyms": ["health", "medical", "clinical", "patient", "diagnosis", "doctor", "drug", "医疗", "诊断", "临床"]
+    },
+    "legal": {
+      "description": "Contract analysis, case law research, compliance review, legal drafting",
+      "synonyms": ["legal", "contract", "law", "compliance", "court", "litigation", "regulatory", "法律", "合规", "合同"]
+    },
+    "marketing": {
+      "description": "Copywriting, content marketing, ad creative, brand voice, social posts",
+      "synonyms": ["marketing", "copywriting", "content", "ad", "brand", "social", "post", "营销", "文案", "推广"]
+    },
+    "marketing/seo": {
+      "description": "Search-engine-optimized content, keyword research, meta descriptions, schema markup",
+      "synonyms": ["seo", "keyword", "serp", "search engine", "meta description", "搜索优化"]
+    },
+    "programming": {
+      "description": "Code generation, refactoring, debugging, code review, autonomous coding agents",
+      "synonyms": ["coding", "coder", "codegen", "developer", "engineering", "agent", "refactor", "debug", "编程", "代码", "开发", "agent"]
+    },
+    "roleplay": {
+      "description": "Persona-driven conversation, companion bots, interactive fiction, character chat",
+      "synonyms": ["roleplay", "chatbot", "companion", "persona", "character", "rpg", "story", "角色扮演", "聊天", "陪伴"]
+    },
+    "science": {
+      "description": "Scientific reasoning beyond academia: biology, chemistry, physics, math problem solving",
+      "synonyms": ["science", "biology", "chemistry", "physics", "math", "engineering", "stem", "科学", "数学", "物理", "化学"]
+    },
+    "technology": {
+      "description": "DevOps, infrastructure, sysadmin, technical Q&A, tooling automation",
+      "synonyms": ["technology", "devops", "infra", "sysadmin", "ops", "tooling", "automation", "运维", "基础设施"]
+    },
+    "translation": {
+      "description": "Language translation, localization, i18n, multilingual content adaptation",
+      "synonyms": ["translate", "translation", "localization", "i18n", "l10n", "multilingual", "翻译", "本地化"]
+    },
+    "trivia": {
+      "description": "General knowledge Q&A, factoid lookup, quiz, encyclopedic queries, personal assistant chat",
+      "synonyms": ["qa", "quiz", "factoid", "trivia", "general knowledge", "assistant", "问答", "知识", "助理"]
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "name": "model-radar",
+  "version": "1.0.0",
+  "description": "Agent skill: find, compare, and recommend LLM models on OpenRouter by budget, context, capabilities, and popularity.",
+  "type": "module",
+  "private": true,
+  "author": "primexiao",
+  "license": "MIT",
+  "homepage": "https://github.com/primexiao/agent-skills/tree/main/skills/model-radar",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/primexiao/agent-skills.git",
+    "directory": "skills/model-radar"
+  },
+  "bugs": {
+    "url": "https://github.com/primexiao/agent-skills/issues"
+  },
+  "keywords": [
+    "agent-skill",
+    "claude-code",
+    "openrouter",
+    "llm",
+    "model-selection",
+    "pricing",
+    "skills.sh"
+  ],
+  "files": [
+    "SKILL.md",
+    "scripts/",
+    "config/"
+  ],
+  "scripts": {
+    "start": "node scripts/main.js"
+  }
+}

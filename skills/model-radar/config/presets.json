@@ -1,0 +1,32 @@
+{
+  "presets": {
+    "coding": {
+      "name": "Coding Agent",
+      "description": "Optimized for coding agents: tool use, reasoning, long output",
+      "weights": { "cost": 0.25, "context": 0.2, "output": 0.25, "capability": 0.3 },
+      "required_capabilities": ["tool_use", "reasoning", "long_output"],
+      "prompt_completion_ratio": [0.4, 0.6]
+    },
+    "batch": {
+      "name": "Batch Processing",
+      "description": "Optimized for batch jobs: cost-sensitive, structured output",
+      "weights": { "cost": 0.5, "context": 0.15, "output": 0.15, "capability": 0.2 },
+      "required_capabilities": ["structured_output"],
+      "prompt_completion_ratio": [0.5, 0.5]
+    },
+    "chat": {
+      "name": "Real-time Chat",
+      "description": "Optimized for conversational use: large context, tool use",
+      "weights": { "cost": 0.2, "context": 0.3, "output": 0.2, "capability": 0.3 },
+      "required_capabilities": ["tool_use"],
+      "prompt_completion_ratio": [0.6, 0.4]
+    },
+    "vision": {
+      "name": "Vision Agent",
+      "description": "Optimized for vision tasks: image input, tool use",
+      "weights": { "cost": 0.25, "context": 0.2, "output": 0.2, "capability": 0.35 },
+      "required_capabilities": ["vision", "tool_use"],
+      "prompt_completion_ratio": [0.7, 0.3]
+    }
+  }
+}
