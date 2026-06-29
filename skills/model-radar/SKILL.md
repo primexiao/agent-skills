@@ -138,7 +138,7 @@ Vertical table — one column per model, one row per dimension:
 
 ```
 cache/
-  raw.json       — raw OpenRouter API response (TTL 6h)
+  raw.json       — OpenRouter frontend card data adapted to local raw schema (TTL 6h)
   models.json    — enriched: normalized pricing + capability labels (TTL 6h)
   rankings.json  — popularity / throughput / latency + usage analytics (TTL 24h)
 config/
@@ -147,7 +147,7 @@ config/
 ```
 
 - Cache files live under `cache/` and are **not committed** — first run hits the network
-- On TTL expiry, the CLI refetches with a 5s timeout
+- On TTL expiry, the CLI refetches with a 10s timeout
 - On any fetch failure, it falls back to the stale cache and emits `[warn]` on stderr — so read-only / offline sandboxes still answer (possibly stale)
 
 ## Sandbox Notes
@@ -157,9 +157,9 @@ config/
 
 ## Known Issues
 
-- The OpenRouter **frontend** API (`/api/frontend/models/find`) used for `sort:popular/throughput/latency` is unofficial; if it 404s, those sorts fall back to the stale `rankings.json` snapshot with a `[warn]`. Pricing / capability data uses the official `/api/v1/models` and is unaffected.
+- The OpenRouter **frontend** API (`/api/frontend/v1/models/find?active=true&fmt=cards`) is unofficial; if it fails, the CLI falls back to stale cache where available and emits `[warn]`.
 
 ## Data Sources
 
-- **Models:** `https://openrouter.ai/api/v1/models` (official, stable)
-- **Rankings:** `https://openrouter.ai/api/frontend/models/find` (unofficial, may break)
+- **Models:** `https://openrouter.ai/api/frontend/v1/models/find?active=true&fmt=cards`
+- **Rankings:** same endpoint with `order=top-weekly`, `order=throughput-high-to-low`, and `order=latency-low-to-high`

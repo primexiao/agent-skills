@@ -1,0 +1,11 @@
+{
+  "name": "agent-skills",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/model-radar/*.test.js",
+    "test:model-radar": "node --test tests/model-radar/*.test.js",
+    "smoke:model-radar": "node skills/model-radar/scripts/main.js list gen:image sort:popular top:10"
+  }
+}

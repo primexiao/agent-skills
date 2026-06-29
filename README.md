@@ -41,14 +41,17 @@ skills/
 ```
 
 Each skill lives in its own `skills/<name>/` directory so `npx skills add`
-installs the full skill payload, including bundled scripts and config files.
+installs the full skill payload with scripts and config files.
 
 ## Development
 
 ```bash
-cd skills/model-radar
-node scripts/main.js list sort:cheap top:5
+npm test
+node skills/model-radar/scripts/main.js list sort:cheap top:5
 ```
+
+Development is plain Node.js: no alternate runtime, transpile step, or build step.
+`scripts/*.js` is the canonical source.
 
 ## License
 
