@@ -1,10 +1,10 @@
 ---
 name: model-radar
-description: Find, compare, and recommend LLM models on OpenRouter. Use when picking a model by budget, context window, capabilities (tool use / vision / reasoning / structured output), or modalities; comparing two or more models side-by-side; recommending a model for coding / batch / chat / vision workloads; or answering "cheapest model with vision under $X / MTok", "what's the most popular Claude", "fastest model with 1M context". Triggers on tasks involving model selection, LLM pricing comparison, capability filtering, or "which model should I use".
+description: Find, compare, and recommend LLM models on OpenRouter. Use when picking a model by budget, context window, capabilities (tool use / vision / reasoning / structured output), or modalities; comparing two or more models side-by-side; recommending a model for coding / batch / chat / vision workloads; checking which models the market actually pays for on a task (agent workflow, debugging, roleplay, translation…); or answering "cheapest model with vision under $X / MTok", "what's the most popular Claude", "fastest model with 1M context", "best model for agent planning by real spend". Triggers on tasks involving model selection, LLM pricing comparison, capability filtering, benchmark scores, task-level market share, or "which model should I use".
 license: MIT
 metadata:
   author: primexiao
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Model Radar
@@ -41,11 +41,25 @@ and emits JSON for the agent to render as a markdown table.
 node scripts/main.js list      [tokens...]    # filter + sort
 node scripts/main.js recommend [tokens...]    # weighted score against a preset
 node scripts/main.js compare   <id|name>...   # side-by-side comparison
+node scripts/main.js tasks     [tag]          # task-level spend leaders (market's real money votes)
 node scripts/main.js refresh                  # force-refresh both caches
 node scripts/self-update.js status            # inspect update state
 node scripts/self-update.js check             # check GitHub for updates
 node scripts/self-update.js apply             # apply the latest skill update
 ```
+
+## Two Market Signals — read both
+
+OpenRouter data has two conflicting tracks; picking a model on one alone misleads:
+
+- **Token/popularity track** (`sort:popular`, `analytics`): dominated by cheap
+  open-weight models running high-volume loops. Answers "what do people run at scale".
+- **Spend track** (`tasks` command): dominated by premium models on high-stakes
+  tasks. Answers "what do people pay for when quality matters".
+
+When recommending, cite both: e.g. "DeepSeek V4 Flash is #1 by tokens, but for
+`agent:workflow_execution` the spend leader is Claude Opus — high-volume loops vs
+mission-critical steps."
 
 ## Self-Update
 
@@ -108,6 +122,29 @@ Tailwind-inspired positional `token:value` arguments. Order doesn't matter.
 | "coding agent"                      | `recommend preset:coding`             |
 | "batch / bulk job"                  | `recommend preset:batch`              |
 | "vision agent"                      | `recommend preset:vision`             |
+| "who's winning at X" / "market leader for X" / "被付费验证的" | `tasks <tag>` |
+
+## Intent → Task Tag (`tasks` command)
+
+Tags follow OpenRouter's 24-task taxonomy (4 macro groups: `agent` / `code` / `data` / `general`).
+`tasks <arg>` substring-matches the tag; a macro name lists its whole group.
+
+| User says                                   | Tag                        |
+| ------------------------------------------- | -------------------------- |
+| "agent workflow" / "agent 主循环"            | `agent:workflow_execution` |
+| "planning" / "任务规划"                      | `agent:multi_step_planning`|
+| "tool calling 调度"                          | `agent:tool_dispatch`      |
+| "memory / 记忆抽取"                          | `agent:memory_extraction`  |
+| "写代码" / "code generation"                 | `code:general_impl`        |
+| "debug" / "修 bug"                           | `code:debugging`           |
+| "前端 / UI"                                  | `code:frontend_ui`         |
+| "code review / 安全审查"                     | `code:review_security`     |
+| "分类 / 打标"                                | `classification_tagging`   |
+| "roleplay / 角色扮演"                        | `roleplay_fiction`         |
+| "翻译"                                       | `translation`              |
+| "客服"                                       | `customer_support`         |
+| "数据抽取 / ETL"                             | `data:extraction` / `data:transformation` |
+| whole-group view ("agent 类任务都看看")      | `agent` / `code` / `data` / `general` |
 
 ## Model Matching (`compare`)
 
@@ -134,10 +171,13 @@ Always render the JSON output as a **markdown table** — tables are the primary
 ### `recommend`
 
 ```
-| Rank | Model | Score | Cost↑ | Ctx↑ | Out↑ | Cap↑ | $/MTok | Caps |
+| Rank | Model | Score | Cost↑ | Ctx↑ | Out↑ | Cap↑ | $/MTok | Bench (I/C/A) | Caps |
 ```
 
 Add a one-line rationale per model. Score and per-dimension scores are in `[0, 1]`.
+The preset score is cost-weighted; when a top pick's `benchmarks` are weak
+(e.g. coding index far below well-known models), say so in the rationale —
+cheap-but-weak is a real trade-off the user must see.
 
 ### `compare`
 
@@ -154,7 +194,44 @@ Vertical table — one column per model, one row per dimension:
 | Capabilities       |   …     |   …     |   …     |
 | Popularity rank    |   …     |   …     |   …     |
 | Weekly requests    |   …     |   …     |   …     |
+| Bench (Int/Code/Agent) | …   |   …     |   …     |
+| Design Arena Elo   |   …     |   …     |   …     |
+| p50 latency / tps  |   …     |   …     |   …     |
+| Tool-call err rate |   …     |   …     |   …     |
 ```
+
+- `Bench`: Artificial Analysis intelligence / coding / agentic indices from `benchmarks`; `—` when absent
+- `Tool-call err rate`: `analytics.tool_call_error_requests / analytics.requests`, render as %
+- `perf` values are a 30-min production window (p50), not a benchmark
+
+### `tasks`
+
+No arg — overview (macro groups + all tasks by spend share):
+
+```
+| # | Task | Group | % of all spend | Spend leader |
+```
+
+With a tag — per-task leaders, already joined with model metadata (no second command needed):
+
+```
+| # | Model | Share of task spend | $/MTok | Ctx | Bench (I/C/A) |
+```
+
+Note the window (`window_days`, currently 30d) and that shares are of **spend ($)**, not tokens.
+
+**Task-based recommendation workflow** — when the user describes a scenario
+("推荐个做 planning 的模型", "best model for translation"):
+
+1. Map the scenario to a tag via the Intent → Task Tag table (you are the matcher —
+   translate synonyms/Chinese freely; substring & macro match are forgiving)
+2. Run `tasks <tag>` — the output is the recommendation table: market spend
+   leaders with price, context, and bench scores
+3. Recommend the spend leader as the quality-validated pick, and name one
+   cheap challenger from the same list (low `blended_per_mtok`, decent bench)
+   for high-volume use — the two-signal rule from [Two Market Signals](#two-market-signals--read-both)
+4. If the scenario also has hard constraints (budget, context, modality),
+   follow up with `list`/`recommend` using those tokens and reconcile
 
 **Always end with:** `Data as of {fetched_at}`. If older than 12h, suggest the user run `node scripts/main.js refresh`.
 
@@ -192,3 +269,5 @@ config/
 
 - **Models:** `https://openrouter.ai/api/frontend/v1/models/find?active=true&fmt=cards`
 - **Rankings:** same endpoint with `order=top-weekly`, `order=throughput-high-to-low`, and `order=latency-low-to-high`
+- **Benchmarks + perf:** carried in the same cards response (`data.benchmarks` = Artificial Analysis indices + Design Arena Elo; `data.endpoint_perf` = p50/p75/p90/p99 latency & throughput per endpoint)
+- **Task spend:** `https://openrouter.ai/api/frontend/v1/rankings/task-spend` (24-task taxonomy, 30-day spend shares; failure tolerated — rankings still build without it)

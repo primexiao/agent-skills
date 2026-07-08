@@ -43,6 +43,12 @@ export function parseTokens(args) {
             command: "refresh"
         };
     }
+    if (command === "tasks") {
+        return {
+            command: "tasks",
+            tag: args[1] ?? null
+        };
+    }
     const isRecommend = command === "recommend";
     const tokens = args.slice(1);
     const constraints = {};

@@ -119,6 +119,21 @@ const RANKINGS_SORTS = new Set([
     "throughput",
     "latency"
 ]);
+function augmentWithRankings(model, rankings) {
+    if (!rankings) return model;
+    const result = {
+        ...model
+    };
+    const popRank = rankings.popularity.find((r)=>r.id === model.id);
+    if (popRank) result.popularity_rank = popRank.rank;
+    const analytic = rankings.analytics[model.id];
+    if (analytic) result.analytics = analytic;
+    const bench = rankings.benchmarks?.[model.id];
+    if (bench) result.benchmarks = bench;
+    const perf = rankings.perf?.[model.id];
+    if (perf) result.perf = perf;
+    return result;
+}
 async function handleList(args) {
     const cache = await getModels();
     let models = filterModels(cache.models, args.constraints);
@@ -150,18 +165,7 @@ async function handleList(args) {
             }
     }
     const showing = models.slice(0, args.top);
-    const augmented = showing.map((m)=>{
-        const result = {
-            ...m
-        };
-        if (rankings) {
-            const popRank = rankings.popularity.find((r)=>r.id === m.id);
-            if (popRank) result.popularity_rank = popRank.rank;
-            const analytic = rankings.analytics[m.id];
-            if (analytic) result.analytics = analytic;
-        }
-        return result;
-    });
+    const augmented = showing.map((m)=>augmentWithRankings(m, rankings));
     output({
         command: "list",
         sort: args.sort,
@@ -197,6 +201,7 @@ async function handleRecommend(args) {
     const filtered = filterModels(cache.models, constraints);
     const scored = scoreModels(filtered, preset);
     const top = scored.slice(0, args.top);
+    const rankings = await getRankings();
     const recommendations = top.map((s, i)=>({
             rank: i + 1,
             id: s.model.id,
@@ -213,7 +218,13 @@ async function handleRecommend(args) {
             max_completion_tokens: s.model.max_completion_tokens,
             input_modalities: s.model.input_modalities,
             output_modalities: s.model.output_modalities,
-            capabilities: s.model.capabilities
+            capabilities: s.model.capabilities,
+            ...rankings?.benchmarks?.[s.model.id] ? {
+                benchmarks: rankings.benchmarks[s.model.id]
+            } : {},
+            ...rankings?.perf?.[s.model.id] ? {
+                perf: rankings.perf[s.model.id]
+            } : {}
         }));
     output({
         command: "recommend",
@@ -233,16 +244,7 @@ async function handleCompare(args) {
     for (const query of args.models){
         const match = findModelMatch(cache.models, query);
         if (match) {
-            const aug = {
-                ...match
-            };
-            if (rankings) {
-                const popRank = rankings.popularity.find((r)=>r.id === match.id);
-                if (popRank) aug.popularity_rank = popRank.rank;
-                const analytic = rankings.analytics[match.id];
-                if (analytic) aug.analytics = analytic;
-            }
-            found.push(aug);
+            found.push(augmentWithRankings(match, rankings));
         } else {
             notFound.push(query);
         }
@@ -252,6 +254,74 @@ async function handleCompare(args) {
         fetched_at: cache.metadata.fetched_at,
         models: found,
         not_found: notFound
+    });
+}
+async function handleTasks(args) {
+    const rankings = await getRankings();
+    if (!rankings?.tasks) {
+        errorExit("No task-spend data in rankings cache. Run `refresh` (needs network) — or the endpoint may be unavailable.");
+    }
+    const { window_days, macro_categories, tasks } = rankings.tasks;
+    const sorted = [
+        ...tasks
+    ].sort((a, b)=>b.spend_share_of_total - a.spend_share_of_total);
+    if (!args.tag) {
+        output({
+            command: "tasks",
+            window_days,
+            fetched_at: rankings.metadata.fetched_at,
+            macro_categories,
+            tasks: sorted.map((t)=>({
+                    tag: t.tag,
+                    macro: t.macro,
+                    spend_share_of_total: t.spend_share_of_total,
+                    top_model: t.top_models[0] ?? null
+                }))
+        });
+        return;
+    }
+    // ponytail: alias map only for words substring-matching can't reach ("coding" does not contain "code")
+    const TASK_ALIASES = {
+        coding: "code",
+        programming: "code",
+        program: "code"
+    };
+    const raw = args.tag.toLowerCase();
+    const needle = TASK_ALIASES[raw] ?? raw;
+    const matched = sorted.filter((t)=>{
+        const macro = t.macro.toLowerCase();
+        return t.tag.toLowerCase().includes(needle) || macro.includes(needle) || needle.includes(macro);
+    });
+    if (!matched.length) {
+        errorExit(`No task matching "${args.tag}". Available: ${sorted.map((t)=>t.tag).join(", ")}`);
+    }
+    // join model metadata so one command yields a full recommendation table
+    const cache = await getModels();
+    const modelById = new Map(cache.models.map((m)=>[
+            m.id,
+            m
+        ]));
+    const enriched = matched.map((t)=>({
+            ...t,
+            top_models: t.top_models.map((tm)=>{
+                const m = modelById.get(tm.id);
+                if (!m) return tm;
+                return {
+                    ...tm,
+                    name: m.name,
+                    blended_per_mtok: m.pricing.blended_per_mtok,
+                    context_length: m.context_length,
+                    ...rankings.benchmarks?.[tm.id] ? {
+                        benchmarks: rankings.benchmarks[tm.id]
+                    } : {}
+                };
+            })
+        }));
+    output({
+        command: "tasks",
+        window_days,
+        fetched_at: rankings.metadata.fetched_at,
+        tasks: enriched
     });
 }
 async function handleRefresh() {
@@ -269,6 +339,8 @@ async function handleRefresh() {
         rankings: rankings ? {
             popularity_count: rankings.popularity.length,
             analytics_count: Object.keys(rankings.analytics).length,
+            benchmarks_count: Object.keys(rankings.benchmarks ?? {}).length,
+            tasks_count: rankings.tasks?.tasks?.length ?? 0,
             fetched_at: rankings.metadata.fetched_at
         } : null
     });
@@ -286,6 +358,9 @@ async function main() {
                 break;
             case "compare":
                 await handleCompare(args);
+                break;
+            case "tasks":
+                await handleTasks(args);
                 break;
             case "refresh":
                 await handleRefresh();
