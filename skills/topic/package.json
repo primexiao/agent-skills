@@ -1,0 +1,36 @@
+{
+  "name": "topic",
+  "version": "1.0.0",
+  "description": "Agent skill: turn any directory into a flat topic archive — one isolated subdirectory per topic, with a thin INDEX/log knowledge layer at the root.",
+  "type": "module",
+  "private": true,
+  "author": "primexiao",
+  "license": "MIT",
+  "homepage": "https://github.com/primexiao/agent-skills/tree/main/skills/topic",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/primexiao/agent-skills.git",
+    "directory": "skills/topic"
+  },
+  "bugs": {
+    "url": "https://github.com/primexiao/agent-skills/issues"
+  },
+  "keywords": [
+    "agent-skill",
+    "claude-code",
+    "knowledge-base",
+    "topic-archive",
+    "notes",
+    "ideas",
+    "skills.sh"
+  ],
+  "files": [
+    "SKILL.md",
+    "references/",
+    "templates/",
+    "scripts/"
+  ],
+  "scripts": {
+    "self-update": "node scripts/self-update.js"
+  }
+}

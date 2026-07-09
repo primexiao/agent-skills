@@ -8,6 +8,7 @@ Community skills for AI coding agents.
 | --- | --- | --- |
 | [`model-radar`](skills/model-radar/SKILL.md) | Find, compare, and recommend LLM models on OpenRouter by budget, context window, capabilities, modalities, and popularity. | `npx skills add primexiao/agent-skills --skill model-radar` |
 | [`invest`](skills/invest/SKILL.md) | Unified investment research (Chinese-language): stock deep-dives, buy checklists, portfolio review, earnings reading, thesis tracking, plus gold/BTC macro analysis — one skill, subcommand routing. | `npx skills add primexiao/agent-skills --skill invest` |
+| [`topic`](skills/topic/SKILL.md) | Turn any directory into a flat topic archive: one isolated subdirectory per idea/topic, a thin INDEX + log knowledge layer at the root, with `init` / new-topic / `lint` workflows. | `npx skills add primexiao/agent-skills --skill topic` |
 
 ## Model Radar
 
@@ -45,6 +46,25 @@ Requirements:
 - An agent runtime with web search (research/earnings/portfolio subcommands); `data` works offline against free public quote APIs
 - No API keys; data sources are free public endpoints (Tencent/Eastmoney quotes, Sina/Yahoo gold, CoinGecko/Coinbase BTC, FRED rates)
 - Reports are written to `~/investing/` (private by convention — keep it out of git)
+
+## Topic
+
+`topic` turns a directory of scattered idea folders into a flat topic archive:
+each topic is an isolated subdirectory; the root carries only control files
+(`AGENTS.md`, `CLAUDE.md`, `INDEX.md`, `log.md`).
+
+- `/topic init [dir]` — audit an existing directory (parallel scan, secret
+  detection, tool-cache triage, code placement) and initialize it behind a
+  proposal → confirm gate; destructive items are confirmed one by one.
+- `/topic <one-liner>` — start a new topic (or merge into an existing one) in
+  the current archive without ever restructuring the root.
+- `/topic lint` — five drift checks (unregistered dirs, stale index dates,
+  missing READMEs, stray root files, new tool caches) with safe auto-fixes.
+
+Rules persist in the target directory's own `AGENTS.md`, so the archive keeps
+working even for agents without the skill installed. Self-updates use the same
+mechanism as `model-radar` (24h-throttled check against this repo; opt out with
+`TOPIC_SKILL_AUTO_UPDATE=0`).
 
 ## Layout
 
