@@ -9,6 +9,7 @@ Community skills for AI coding agents.
 | [`model-radar`](skills/model-radar/SKILL.md) | Find, compare, and recommend LLM models on OpenRouter by budget, context window, capabilities, modalities, and popularity. | `npx skills add primexiao/agent-skills --skill model-radar` |
 | [`invest`](skills/invest/SKILL.md) | Unified investment research (Chinese-language): stock deep-dives, buy checklists, portfolio review, earnings reading, thesis tracking, plus gold/BTC macro analysis — one skill, subcommand routing. | `npx skills add primexiao/agent-skills --skill invest` |
 | [`topic`](skills/topic/SKILL.md) | Turn any directory into a flat topic archive: one isolated subdirectory per idea/topic, a thin INDEX + log knowledge layer at the root, with `init` / new-topic / `lint` workflows. | `npx skills add primexiao/agent-skills --skill topic` |
+| [`publish-my-skill`](skills/publish-my-skill/SKILL.md) | Publish or update Prime's Agent Skills in the public primexiao/agent-skills GitHub repository and make them installable through skills.sh. | `npx skills add primexiao/agent-skills --skill publish-my-skill` |
 
 ## Model Radar
 
