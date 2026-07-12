@@ -1,0 +1,16 @@
+[
+  { "query": "/topic init ./ideas", "should_trigger": true },
+  { "query": "Start a new topic in my idea archive for local-first agents.", "should_trigger": true },
+  { "query": "/topic lint report only; don't fix anything.", "should_trigger": true },
+  { "query": "Turn these independent idea folders into a flat topic vault with an index.", "should_trigger": true },
+  { "query": "Create a two-week engineering sprint plan with owners and due dates.", "should_trigger": false },
+  { "query": "Set up GitHub Issues and a project board for this repository.", "should_trigger": false },
+  { "query": "Refactor this Go repository into cmd, internal, and pkg directories.", "should_trigger": false },
+  { "query": "Research Notion the company and its competitive position.", "should_trigger": false },
+  { "query": "Compare Claude and Gemini for document extraction.", "should_trigger": false },
+  { "query": "把我的投资 thesis 笔记整理成彼此独立的 idea archive。", "should_trigger": true },
+  { "query": "Create a new topic in my archive for the Linear company research.", "should_trigger": true },
+  { "query": "What are the current research topics in LLM safety?", "should_trigger": false },
+  { "query": "/topic 建一个两周 sprint 规划主题", "should_trigger": true },
+  { "query": "我有一堆互相独立的想法目录，想做成带索引的主题库。", "should_trigger": true }
+]

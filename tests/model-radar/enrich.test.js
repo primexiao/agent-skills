@@ -56,7 +56,7 @@ describe("enrich", () => {
     ]);
   });
 
-  it("normalizes provider, modalities, pricing, and open source flag", () => {
+  it("preserves the Hugging Face model id without inferring its license", () => {
     const model = enrichModel(
       rawModel({
         id: "meta-llama/llama-3.3-70b-instruct",
@@ -67,7 +67,8 @@ describe("enrich", () => {
     );
 
     assert.equal(model.context_length, 131072);
-    assert.equal(model.is_open_source, true);
+    assert.equal(model.hugging_face_id, "meta-llama/Llama-3.3-70B-Instruct");
+    assert.equal(Object.hasOwn(model, "description"), false);
     assert.deepEqual(model.input_modalities, ["text"]);
     assert.deepEqual(model.output_modalities, ["text"]);
   });

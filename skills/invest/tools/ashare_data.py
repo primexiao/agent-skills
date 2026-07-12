@@ -2,7 +2,7 @@
 """A股数据工具 — 腾讯行情 + 东方财富搜索/财务，零外部依赖（仅 stdlib）。
 
 为 Claude Code Skills 提供 A 股实时行情、财务数据等数据。
-设计原则：独立模块，不影响现有工具；使用 curl 直连绕过系统代理。
+设计原则：独立模块，不影响现有工具；遵循用户配置的系统代理。
 
 用法（由 Skills 自动调用）：
     python3.11 tools/ashare_data.py quote 600519                    # 实时行情
@@ -10,26 +10,25 @@
     python3.11 tools/ashare_data.py valuation 600519                # 估值指标
     python3.11 tools/ashare_data.py search 茅台                      # 搜索股票代码
 
-需要 Python >= 3.8，零外部依赖。
+需要 Python >= 3.10，零外部依赖。
 """
 
 import argparse
 import json
-import os
+import re
 import subprocess
 import sys
-from decimal import Decimal, ROUND_HALF_EVEN
 
 _TIMEOUT = 15
 
 
 def _curl(url):
-    """用 curl --noproxy 直连，绕过系统代理。"""
+    """用 curl 请求，并遵循用户配置的系统代理。"""
     result = subprocess.run(
-        ["curl", "-s", "--noproxy", "*",
+        ["curl", "-fsS", "-m", str(_TIMEOUT),
          "-H", "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)",
          url],
-        capture_output=True, timeout=_TIMEOUT,
+        capture_output=True, timeout=_TIMEOUT + 5,
     )
     if result.returncode != 0 or not result.stdout.strip():
         raise ConnectionError(f"请求失败: {url}")
@@ -54,14 +53,20 @@ def _curl_json(url, params=None):
 
 def _qq_code(code: str) -> str:
     """将股票代码转为腾讯行情格式。"""
-    code = code.strip().replace(".SH", "").replace(".SZ", "").replace(".BJ", "")
-    if code.startswith(("6", "9", "5")):
-        return f"sh{code}"
-    elif code.startswith(("0", "3", "2", "1")):
-        return f"sz{code}"
-    elif code.startswith(("4", "8")):
-        return f"bj{code}"
-    return f"sh{code}"
+    match = re.fullmatch(r"(\d{6})(?:\.(SH|SZ|BJ))?", code.strip().upper())
+    if not match:
+        raise ValueError(f"无效股票代码: {code}")
+
+    digits, explicit_market = match.groups()
+    if explicit_market:
+        return f"{explicit_market.lower()}{digits}"
+    if digits.startswith(("6", "9", "5")):
+        return f"sh{digits}"
+    if digits.startswith(("0", "3", "2", "1")):
+        return f"sz{digits}"
+    if digits.startswith(("4", "8")):
+        return f"bj{digits}"
+    raise ValueError(f"无法判断股票市场: {code}")
 
 
 def _parse_qq_quote(raw: str) -> dict:
@@ -73,6 +78,15 @@ def _parse_qq_quote(raw: str) -> dict:
     fields = raw[start + 1:end].split("~")
     if len(fields) < 50:
         return {}
+    source_time = fields[30] if len(fields) > 30 else ""
+    if re.fullmatch(r"\d{14}", source_time):
+        source_time = (
+            f"{source_time[0:4]}-{source_time[4:6]}-{source_time[6:8]} "
+            f"{source_time[8:10]}:{source_time[10:12]}:{source_time[12:14]} Asia/Shanghai"
+        )
+    else:
+        source_time = "-"
+
     return {
         "name": fields[1],
         "code": fields[2],
@@ -86,6 +100,7 @@ def _parse_qq_quote(raw: str) -> dict:
         "low": fields[34] if len(fields) > 34 else fields[3],
         "change_pct": fields[32],
         "change_amt": fields[31],
+        "source_time": source_time,
         "turnover_amt": fields[37] if len(fields) > 37 else "-",
         "turnover_rate": fields[38] if len(fields) > 38 else "-",
         "pe": fields[39] if len(fields) > 39 else "-",
@@ -94,7 +109,6 @@ def _parse_qq_quote(raw: str) -> dict:
         "pb": fields[46] if len(fields) > 46 else "-",
         "high_52w": fields[47] if len(fields) > 47 else "-",
         "low_52w": fields[48] if len(fields) > 48 else "-",
-        "total_shares": fields[38] if len(fields) > 38 else "-",  # will recalculate
     }
 
 
@@ -153,6 +167,7 @@ def cmd_quote(code: str):
     print(f"  换手率:     {d['turnover_rate']}%")
     print(f"  52周最高:   {d['high_52w']}")
     print(f"  52周最低:   {d['low_52w']}")
+    print(f"  数据时间:   {d['source_time']}")
 
 
 def cmd_valuation(code: str):
@@ -177,19 +192,8 @@ def cmd_valuation(code: str):
     print(f"  PB:         {d['pb']}")
     print(f"  52周最高:   {d['high_52w']}")
     print(f"  52周最低:   {d['low_52w']}")
-
-    # 市值验算
-    try:
-        p = Decimal(price)
-        cap = Decimal(market_cap_yi) * Decimal("1e8")
-        shares = cap / p
-        print(f"\n  推算总股本: {_fmt_yi(float(shares))}股")
-        calc_cap = p * shares
-        reported_cap = Decimal(market_cap_yi) * Decimal("1e8")
-        diff = abs(calc_cap - reported_cap) / reported_cap * 100
-        print(f"  市值验算:   ✅ 一致（推算法，偏差 {float(diff):.1f}%）")
-    except Exception:
-        pass
+    print(f"  数据时间:   {d['source_time']}")
+    print("  市值验算:   — 未获取独立总股本，未独立验证")
 
 
 def cmd_financials(code: str):
@@ -199,8 +203,8 @@ def cmd_financials(code: str):
     d = _parse_qq_quote(raw)
     name = d.get("name", code) if d else code
 
-    code_clean = code.strip().replace(".SH", "").replace(".SZ", "").replace(".BJ", "")
-    market = "SH" if code_clean.startswith(("6", "9", "5")) else "SZ"
+    code_clean = qq_code[2:]
+    market = qq_code[:2].upper()
 
     # 东方财富 datacenter API（年报数据）
     fin_url = "https://datacenter.eastmoney.com/securities/api/data/get"
@@ -252,7 +256,7 @@ def cmd_financials(code: str):
 
         print(f"\n  --- {date} {report_name} ---")
         if revenue is not None:
-            print(f"  营收:           {_fmt_yi(revenue)}")
+            print(f"  营业总收入:     {_fmt_yi(revenue)}")
         if rev_growth is not None:
             print(f"  营收增速:       {_fmt_pct(rev_growth)}")
         if net_profit is not None:
@@ -270,12 +274,9 @@ def cmd_financials(code: str):
 def cmd_search(keyword: str):
     """搜索股票代码。"""
     url = "https://searchadapter.eastmoney.com/api/suggest/get"
-    # Use env var or fall back to the public eastmoney search token
-    token = os.environ.get("EASTMONEY_SEARCH_TOKEN") or "D43BF722C8E33BDC906FB84D85E326E8"
     params = {
         "input": keyword,
         "type": "14",
-        "token": token,
         "count": "10",
     }
     data = _curl_json(url, params)

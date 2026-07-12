@@ -56,7 +56,7 @@ export function enrichedModel(overrides = {}) {
       image_token_per_mtok: null,
     },
     capabilities: ["tool_use", "structured_output"],
-    is_open_source: false,
+    hugging_face_id: null,
     supported_parameters: ["tools", "tool_choice", "response_format"],
     ...overrides,
   };
@@ -82,7 +82,7 @@ export function sampleModels() {
         image_token_per_mtok: null,
       },
       capabilities: ["tool_use", "structured_output"],
-      is_open_source: false,
+      hugging_face_id: null,
     }),
     enrichedModel({
       id: "meta-llama/llama-3.3-70b-instruct",
@@ -102,7 +102,7 @@ export function sampleModels() {
         image_token_per_mtok: null,
       },
       capabilities: ["tool_use"],
-      is_open_source: true,
+      hugging_face_id: "meta-llama/Llama-3.3-70B-Instruct",
     }),
     enrichedModel({
       id: "google/gemini-2.5-flash-image-preview",
@@ -125,7 +125,7 @@ export function sampleModels() {
         image_token_per_mtok: null,
       },
       capabilities: ["vision", "image_generation"],
-      is_open_source: false,
+      hugging_face_id: null,
     }),
     enrichedModel({
       id: "anthropic/claude-sonnet-4",
@@ -148,7 +148,7 @@ export function sampleModels() {
         image_token_per_mtok: null,
       },
       capabilities: ["vision", "tool_use", "reasoning"],
-      is_open_source: false,
+      hugging_face_id: null,
     }),
   ];
 }
@@ -241,6 +241,29 @@ export function rankingsResponse(order = "top-weekly") {
         "openai/gpt-4o-mini": [
           { category: "programming", rank: 1, volume: 500, count: 50 },
           { category: "Ignored Category", rank: 1, volume: 100, count: 10 },
+        ],
+      },
+    },
+  };
+}
+
+export function taskSpendResponse() {
+  return {
+    data: {
+      spend: {
+        windowDays: 30,
+        macroCategories: [
+          { key: "agent", label: "Agent", spendShare: 0.4 },
+        ],
+        tasks: [
+          {
+            tag: "agent:workflow_execution",
+            macroCategory: "agent",
+            spendShareOfTotal: 0.2,
+            models: [
+              { model: "openai/gpt-4o-mini", share: 0.5 },
+            ],
+          },
         ],
       },
     },

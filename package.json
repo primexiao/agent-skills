@@ -3,8 +3,15 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
-    "test": "node --test tests/model-radar/*.test.js",
+    "test": "npm run validate && npm run test:node && npm run test:python",
+    "validate": "node scripts/validate-repo.mjs && node scripts/validate-evals.mjs",
+    "validate:evals": "node scripts/validate-evals.mjs",
+    "test:node": "node --test tests/model-radar/*.test.js tests/repo/*.test.js",
+    "test:python": "node scripts/run-python-tests.mjs",
     "test:model-radar": "node --test tests/model-radar/*.test.js",
     "smoke:model-radar": "node skills/model-radar/scripts/main.js list gen:image sort:popular top:10"
   }

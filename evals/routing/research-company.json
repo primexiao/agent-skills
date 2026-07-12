@@ -1,0 +1,16 @@
+[
+  { "query": "Research linear.app for a procurement decision and identify the legal operator.", "should_trigger": true },
+  { "query": "Who owns CapCut, how does it make money, and who are its closest product competitors?", "should_trigger": true },
+  { "query": "对这家未上市 AI 创业公司做商业尽调：团队、产品、客户、融资和风险。", "should_trigger": true },
+  { "query": "Compare Shopify and BigCommerce as businesses and partner ecosystems.", "should_trigger": true },
+  { "query": "Should I buy Shopify stock at today's valuation?", "should_trigger": false },
+  { "query": "Interpret Tesla's latest earnings and tell me whether to reduce my position.", "should_trigger": false },
+  { "query": "Compare the cheapest OpenRouter models for a vision agent.", "should_trigger": false },
+  { "query": "Initialize my ideas folder as a topic archive.", "should_trigger": false },
+  { "query": "Fix the failing unit tests in this company's GitHub repository.", "should_trigger": false },
+  { "query": "Analyze Shopify's business model and moat, but do not discuss its stock price.", "should_trigger": true },
+  { "query": "Do commercial and product due diligence on this private startup for a possible VC investment.", "should_trigger": true },
+  { "query": "Compare Anthropic and OpenAI as enterprise AI suppliers, including entities, products, and business models.", "should_trigger": true },
+  { "query": "Compare Claude and Gemini model prices, context windows, and tool-use support.", "should_trigger": false },
+  { "query": "Assess this open-source GitHub project's operator, commercial adoption, and vendor risk.", "should_trigger": true }
+]

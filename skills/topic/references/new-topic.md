@@ -18,6 +18,6 @@ Lightweight fallback: create only `<slug>/README.md`. Do not generate any root c
 
 ## Details
 
-- Slugs are stable, descriptive kebab-case; add a qualifier only on a real collision.
+- Slugs are stable, descriptive kebab-case and exactly one path component; never copy separators, `.` or `..` from user input. Add a qualifier only on a real collision.
 - READMEs hold synthesized outcomes, never conversation transcripts.
 - Before the session ends, complete the session-close touches per the Shared Rules (in an uninitialized directory, only the topic README applies).

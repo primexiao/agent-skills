@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """宏观资产数据工具 — 黄金 / BTC / 美元指数 / 实际利率，零外部依赖（仅 stdlib）。
 
-为 /invest 的 gold / btc 子命令提供数据。内置双源交叉验证。
+为 /invest 的 gold / btc 子命令提供数据。BTC 与黄金内置双源；DXY 与 FRED 指标为单源。
 风格与数据链路沿用 xbtlin/ai-berkshire (MIT) 的 ashare_data.py 模式。
 
 用法（由 Skill 自动调用）:
@@ -21,29 +21,28 @@
 import json
 import subprocess
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 _TIMEOUT = 15
 
 
 def _curl(url, headers=None, browser_ua=True):
-    """先直连（绕过系统代理），失败再走系统代理重试一次。
+    """请求 URL，并遵循用户配置的系统代理。
 
     browser_ua=False 时用 curl 默认 UA（FRED 对浏览器 UA 返回空 body）。
     """
     ua = (["-H", "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"]
           if browser_ua else [])
-    for extra in (["--noproxy", "*"], []):
-        cmd = ["curl", "-s", "-m", str(_TIMEOUT), *extra, *ua]
-        for h in headers or []:
-            cmd += ["-H", h]
-        cmd.append(url)
-        result = subprocess.run(cmd, capture_output=True, timeout=_TIMEOUT + 5)
-        if result.returncode == 0 and result.stdout.strip():
-            try:
-                return result.stdout.decode("utf-8")
-            except UnicodeDecodeError:
-                return result.stdout.decode("gbk", errors="replace")
+    cmd = ["curl", "-fsS", "-m", str(_TIMEOUT), *ua]
+    for h in headers or []:
+        cmd += ["-H", h]
+    cmd.append(url)
+    result = subprocess.run(cmd, capture_output=True, timeout=_TIMEOUT + 5)
+    if result.returncode == 0 and result.stdout.strip():
+        try:
+            return result.stdout.decode("utf-8")
+        except UnicodeDecodeError:
+            return result.stdout.decode("gbk", errors="replace")
     raise ConnectionError(f"请求失败: {url}")
 
 
@@ -261,7 +260,8 @@ def main():
     elif cmd == "dashboard":
         print_gold(); print(); print_btc(); print(); print_dxy(); print(); print_rates()
         print()
-        print(f"  数据时间: {datetime.now().strftime('%Y-%m-%d %H:%M')} 本地时间（UTC+8）")
+        china_time = datetime.now(timezone(timedelta(hours=8)))
+        print(f"  数据时间: {china_time.strftime('%Y-%m-%d %H:%M')} UTC+8")
         print("  ⚠️ 链上指标(MVRV/ETF流量/央行购金)不在本工具内，须 WebSearch 并标注来源+日期")
     else:
         print(__doc__)

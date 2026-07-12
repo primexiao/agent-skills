@@ -5,12 +5,12 @@ This directory is a flat topic archive for exploratory ideas, discussions, and p
 ## Repository Shape
 
 - Every topic lives in a top-level directory: `<kebab-case-topic>/`. There is no `topics/` layer.
-- Keep the root limited to control files: `AGENTS.md`, `CLAUDE.md`, `INDEX.md`, `log.md`. Do not add scratch files at the root.
+- Keep the root limited to control files: `AGENTS.md`, `CLAUDE.md`, `INDEX.md`, `log.md`, and `.gitignore`. Do not add scratch files at the root.
 - `INDEX.md` is the invariant: every top-level directory must have exactly one row there. A directory missing from `INDEX.md` is a lint error.
 
 ## INDEX.md
 
-- One row per directory: name, status, last-updated date, one-line summary.
+- Use exactly `| Topic | Status | Updated | Summary |`, with one row per directory, an absolute `YYYY-MM-DD` date, and a one-line summary.
 - Statuses:
   - `idea` — early scratch, notes only.
   - `active` — ongoing discussion or prototype.

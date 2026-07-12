@@ -1,4 +1,5 @@
 export function matchesRange(value, range) {
+    if (typeof value !== "number" || !Number.isFinite(value)) return false;
     if (range.min !== undefined && value < range.min) return false;
     if (range.max !== undefined && value > range.max) return false;
     return true;
@@ -30,7 +31,8 @@ export function filterModels(models, constraints) {
                 if (!model.output_modalities.includes(mod)) return false;
             }
         }
-        if (constraints.open_source !== undefined && model.is_open_source !== constraints.open_source) {
+        if (constraints.hugging_face_listed !== undefined &&
+            (model.hugging_face_id !== null) !== constraints.hugging_face_listed) {
             return false;
         }
         return true;

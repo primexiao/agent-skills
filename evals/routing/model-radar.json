@@ -1,0 +1,14 @@
+[
+  { "query": "Find the cheapest OpenRouter model with vision and tool use under $2 per million tokens.", "should_trigger": true },
+  { "query": "On OpenRouter, compare Claude Sonnet and GPT-5 on price, context, and latency.", "should_trigger": true },
+  { "query": "做 agent planning 时，OpenRouter 上大家真正花钱用的是哪些模型？", "should_trigger": true },
+  { "query": "I need an OpenRouter shortlist of 1M-context models with downloadable weights; verify their licenses.", "should_trigger": true },
+  { "query": "How should I fine-tune Llama on our proprietary support data?", "should_trigger": false },
+  { "query": "Shortlist 1M-context models that I can run locally with vLLM; do not use hosted catalogs.", "should_trigger": false },
+  { "query": "Debug my OpenRouter provider routing, retries, and API authentication.", "should_trigger": false },
+  { "query": "Research OpenRouter's model pricing as one input to its company business model.", "should_trigger": false },
+  { "query": "Design a vLLM deployment architecture on Kubernetes.", "should_trigger": false },
+  { "query": "Give me the latest general AI model news this week.", "should_trigger": false },
+  { "query": "Research OpenRouter the company, its funding, team, and business model.", "should_trigger": false },
+  { "query": "Should I buy NVIDIA stock because model inference demand is rising?", "should_trigger": false }
+]

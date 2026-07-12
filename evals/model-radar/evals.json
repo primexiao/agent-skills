@@ -1,0 +1,35 @@
+{
+  "skill_name": "model-radar",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Find the three cheapest OpenRouter models under $2/MTok blended that accept images and support tool use. Do not relax any constraint.",
+      "expected_output": "A current, constrained shortlist rendered as a comparison table.",
+      "expectations": [
+        "Uses the list command with price, image-input, tool-use, cheap-sort, and top-three constraints",
+        "Does not silently include models that violate a hard constraint",
+        "Renders a markdown table and ends with the data timestamp"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Compare anthropic/claude-sonnet-4 and openai/gpt-4o-mini on OpenRouter. I care about price, context, output limit, capabilities, benchmarks, and production latency.",
+      "expected_output": "A vertical two-model comparison using the exact requested IDs.",
+      "expectations": [
+        "Uses compare rather than a fuzzy recommendation",
+        "Shows every requested dimension and marks unavailable values with an em dash",
+        "Distinguishes production telemetry from benchmark evidence"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "What model is market-validated for agent workflow execution, and what cheaper challenger should I test for high-volume loops?",
+      "expected_output": "A task-spend recommendation that separates premium quality spend from high-volume economics.",
+      "expectations": [
+        "Maps the request to agent:workflow_execution and uses task-spend data",
+        "Names the spend leader and a materially cheaper credible challenger when present",
+        "States that spend share is dollars rather than tokens and includes the data window"
+      ]
+    }
+  ]
+}

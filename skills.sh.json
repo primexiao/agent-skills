@@ -1,0 +1,28 @@
+{
+  "$schema": "https://skills.sh/schemas/skills.sh.schema.json",
+  "notGrouped": "bottom",
+  "groupings": [
+    {
+      "title": "Model Selection",
+      "description": "Choose and compare models using current market data.",
+      "skills": [
+        "model-radar"
+      ]
+    },
+    {
+      "title": "Research & Decisions",
+      "description": "Research businesses, securities, portfolios, and investment decisions.",
+      "skills": [
+        "research-company",
+        "invest"
+      ]
+    },
+    {
+      "title": "Knowledge Workflows",
+      "description": "Keep idea and research archives organized over time.",
+      "skills": [
+        "topic"
+      ]
+    }
+  ]
+}
