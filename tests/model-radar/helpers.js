@@ -61,6 +61,7 @@ export function seedModelRadarDir(t, overrides = {}) {
     metadata: {
       fetched_at: fetchedAt,
       ttl_hours: 6,
+      schema_version: 3,
       count: overrides.models?.length ?? sampleModels().length,
     },
     models: overrides.models ?? sampleModels(),

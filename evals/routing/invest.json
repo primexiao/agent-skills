@@ -1,0 +1,11 @@
+[
+  { "query": "茅台现在这个估值值得买吗？做三情景分析。", "should_trigger": true },
+  { "query": "Review my stock, gold, BTC, and cash portfolio for concentration risk.", "should_trigger": true },
+  { "query": "从持股人的角度精读这份 10-K，并判断投资论文是否破裂。", "should_trigger": true },
+  { "query": "Check the current BTC price and whether it fits a 3% portfolio allocation.", "should_trigger": true },
+  { "query": "Research Figma's product strategy, customers, and competitors for procurement.", "should_trigger": false },
+  { "query": "Who founded Stripe and what is its business model?", "should_trigger": false },
+  { "query": "Help me file my annual tax return.", "should_trigger": false },
+  { "query": "Find an OpenRouter model for stock-news classification.", "should_trigger": false },
+  { "query": "Organize my scattered investing notes into topic folders.", "should_trigger": false }
+]

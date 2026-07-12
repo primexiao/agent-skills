@@ -1,7 +1,6 @@
 import { dirname, join } from "path";
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
-import { spawnSync } from "child_process";
 import { readCache, writeCache, isCacheValid } from "./cache.js";
 import { fetchRawModels } from "./fetch.js";
 import { enrichModel } from "./enrich.js";
@@ -10,53 +9,15 @@ import { findModelMatch } from "./match.js";
 import { scoreModels } from "./score.js";
 import { parseTokens } from "./parse.js";
 import { fetchRankings } from "./rankings.js";
+import { resolveCacheDir } from "./paths.js";
 const DEFAULT_SKILL_DIR = join(dirname(fileURLToPath(import.meta.url)), "..");
 const SKILL_DIR = process.env.MODEL_RADAR_DIR ?? DEFAULT_SKILL_DIR;
-const RAW_PATH = join(SKILL_DIR, "cache", "raw.json");
-const ENRICHED_PATH = join(SKILL_DIR, "cache", "models.json");
-const RANKINGS_PATH = join(SKILL_DIR, "cache", "rankings.json");
+const CACHE_DIR = resolveCacheDir();
+const RAW_PATH = join(CACHE_DIR, "raw.json");
+const ENRICHED_PATH = join(CACHE_DIR, "models.json");
+const RANKINGS_PATH = join(CACHE_DIR, "rankings.json");
 const PRESETS_PATH = join(SKILL_DIR, "config", "presets.json");
-const SELF_UPDATE_PATH = join(SKILL_DIR, "scripts", "self-update.js");
-const MAIN_PATH = fileURLToPath(import.meta.url);
-function runSelfUpdate() {
-    if (process.env.MODEL_RADAR_SKIP_SELF_UPDATE === "1") return false;
-    const result = spawnSync(process.execPath, [
-        SELF_UPDATE_PATH,
-        "auto"
-    ], {
-        stdio: [
-            "ignore",
-            "ignore",
-            "pipe"
-        ],
-        env: process.env
-    });
-    const stderr = result.stderr?.toString() ?? "";
-    if (stderr) process.stderr.write(stderr);
-    if (result.error) {
-        console.error(`[warn] model-radar self-update failed: ${result.error.message}`);
-    } else if (result.status !== 0) {
-        console.error(`[warn] model-radar self-update exited with status ${result.status}`);
-    }
-    return stderr.includes("MODEL_RADAR_UPDATED");
-}
-function restartAfterSelfUpdate() {
-    const result = spawnSync(process.execPath, [
-        MAIN_PATH,
-        ...process.argv.slice(2)
-    ], {
-        stdio: "inherit",
-        env: {
-            ...process.env,
-            MODEL_RADAR_SKIP_SELF_UPDATE: "1"
-        }
-    });
-    if (result.error) {
-        console.error(`[warn] model-radar restart after self-update failed: ${result.error.message}`);
-        process.exit(1);
-    }
-    process.exit(result.status ?? 0);
-}
+const MODEL_CACHE_SCHEMA = 3;
 function loadPresets() {
     const text = readFileSync(PRESETS_PATH, "utf-8");
     return JSON.parse(text);
@@ -73,7 +34,7 @@ function errorExit(message, code = 1) {
 async function getModels(forceRefresh = false) {
     if (!forceRefresh) {
         const cached = readCache(ENRICHED_PATH);
-        if (cached && isCacheValid(cached)) return cached;
+        if (cached?.metadata?.schema_version === MODEL_CACHE_SCHEMA && isCacheValid(cached)) return cached;
     }
     try {
         const raw = await fetchRawModels();
@@ -84,7 +45,8 @@ async function getModels(forceRefresh = false) {
                 fetched_at: raw.metadata.fetched_at,
                 ttl_hours: raw.metadata.ttl_hours,
                 total_models: raw.metadata.total_models,
-                enriched: true
+                enriched: true,
+                schema_version: MODEL_CACHE_SCHEMA
             },
             models: raw.data.map(enrichModel)
         };
@@ -92,7 +54,7 @@ async function getModels(forceRefresh = false) {
         return enriched;
     } catch (err) {
         const stale = readCache(ENRICHED_PATH);
-        if (stale) {
+        if (stale?.metadata?.schema_version === MODEL_CACHE_SCHEMA) {
             console.error(`[warn] API fetch failed, using stale cache from ${stale.metadata.fetched_at}`);
             return stale;
         }
@@ -347,7 +309,6 @@ async function handleRefresh() {
 }
 async function main() {
     try {
-        if (runSelfUpdate()) restartAfterSelfUpdate();
         const args = parseTokens(process.argv.slice(2));
         switch(args.command){
             case "list":

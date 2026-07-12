@@ -5,7 +5,7 @@ Command-line tool for verifying financial data accuracy during investment resear
 Automatically called by Claude Code Skills at critical validation checkpoints.
 
 Zero external dependencies — uses only Python stdlib (decimal, json, math, argparse).
-Requires Python >= 3.7.
+Requires Python >= 3.10.
 
 Usage (called automatically by Skills, no manual execution needed):
     python3 tools/financial_rigor.py verify-market-cap --price 510 --shares 9.11e9 --reported 4.65e12 --currency HKD
@@ -16,6 +16,7 @@ Usage (called automatically by Skills, no manual execution needed):
 """
 
 import argparse
+import ast
 import json
 import math
 import sys
@@ -65,7 +66,13 @@ def verify_market_cap(price, shares, reported_cap, currency=""):
     r = exact(reported_cap)
 
     calculated = _CTX.multiply(p, s)
-    deviation = abs(float(calculated - r) / float(r)) * 100 if r != 0 else 0
+    if r <= 0:
+        print("  ❌ 报告市值必须大于 0")
+        return False
+    deviation = _CTX.multiply(
+        _CTX.divide(abs(calculated - r), abs(r)),
+        Decimal("100"),
+    )
 
     print("=" * 60)
     print("市值验算 (Market Cap Verification)")
@@ -166,6 +173,9 @@ def verify_valuation(price, eps=None, bvps=None, fcf_per_share=None,
 
 def cross_validate(field_name, source_values: dict, unit="", tolerance_pct=2.0):
     """Compare a data point across multiple sources, flag discrepancies."""
+    if len(source_values) < 2:
+        raise ValueError("交叉验证至少需要两个独立数据来源")
+
     print("=" * 60)
     print(f"交叉验证: {field_name} (Cross-Validation)")
     print("=" * 60)
@@ -173,48 +183,69 @@ def cross_validate(field_name, source_values: dict, unit="", tolerance_pct=2.0):
     values = {k: exact(v) for k, v in source_values.items()}
     sources = list(values.keys())
     nums = list(values.values())
+    tolerance = exact(tolerance_pct)
+    primary_source = sources[0]
+    primary_value = values[primary_source]
 
     # Find median as reference
-    sorted_vals = sorted(float(v) for v in nums)
+    sorted_vals = sorted(nums)
     n = len(sorted_vals)
-    median = sorted_vals[n // 2] if n % 2 == 1 else (sorted_vals[n//2-1] + sorted_vals[n//2]) / 2
+    median = (
+        sorted_vals[n // 2]
+        if n % 2 == 1
+        else _CTX.divide(_CTX.add(sorted_vals[n // 2 - 1], sorted_vals[n // 2]), Decimal("2"))
+    )
 
     print(f"  数据来源数: {len(sources)}")
-    print(f"  参考中位数: {fmt_number(exact(median))} {unit}")
+    print(f"  主源 ({primary_source}): {fmt_number(primary_value)} {unit}")
+    print(f"  数据中位数: {fmt_number(median)} {unit}")
     print()
 
     all_ok = True
+    max_deviation = Decimal("0")
     for src, val in values.items():
-        dev = abs(float(val) - median) / median * 100 if median != 0 else 0
-        status = "✅" if dev <= tolerance_pct else "❌"
-        if dev > tolerance_pct:
+        if primary_value == 0:
+            dev = Decimal("0") if val == 0 else Decimal("Infinity")
+        else:
+            dev = _CTX.multiply(
+                _CTX.divide(abs(val - primary_value), abs(primary_value)),
+                Decimal("100"),
+            )
+        max_deviation = max(max_deviation, dev)
+        status = "✅" if dev <= tolerance else "❌"
+        if dev > tolerance:
             all_ok = False
         print(f"  {status} {src:20s}: {fmt_number(val)} {unit}  (偏差 {dev:.2f}%)")
 
     print()
     if all_ok:
-        print(f"  ✅ 所有来源偏差 ≤ {tolerance_pct}%, 数据一致")
+        print(f"  ✅ 所有来源偏差 ≤ {tolerance}%, 数据一致")
     else:
-        print(f"  ⚠️  存在来源偏差 > {tolerance_pct}%, 请核实差异原因")
+        print(f"  ⚠️  存在来源偏差 > {tolerance}%, 请核实差异原因")
         print(f"     建议: 优先采用公司年报/交易所数据")
 
     # Consensus value
     consensus = median
-    print(f"\n  共识值 (加权中位数): {fmt_number(exact(consensus))} {unit}")
-    return {"consensus": consensus, "all_consistent": all_ok}
+    print(f"\n  数据中位数: {fmt_number(consensus)} {unit}")
+    return {
+        "consensus": consensus,
+        "primary_source": primary_source,
+        "max_deviation_pct": max_deviation,
+        "all_consistent": all_ok,
+    }
 
 
 # ---------------------------------------------------------------------------
-# 4. Benford's Law Quick Check (财务数据造假检测)
+# 4. Benford's Law Distribution Screen (首位数分布筛查)
 # ---------------------------------------------------------------------------
 
 _BENFORD = {d: math.log10(1 + 1/d) for d in range(1, 10)}
 
 
 def benford_check(values: list):
-    """Quick Benford's Law check on a list of financial values."""
+    """Screen first-digit distribution; this cannot establish fraud."""
     print("=" * 60)
-    print("Benford定律检测 (Financial Data Fabrication Check)")
+    print("Benford首位数分布筛查 (Distribution Screen)")
     print("=" * 60)
 
     # Extract leading digits
@@ -273,10 +304,10 @@ def benford_check(values: list):
     print()
     is_ok = mad < 0.015
     if is_ok:
-        print("  ✅ 数据首位数字分布符合Benford定律")
+        print("  ✅ 首位数分布符合该筛查阈值；这不证明数据真实或可靠")
     else:
-        print("  ❌ 数据首位数字分布异常, 可能存在人为调整")
-        print("     提示: 不符合Benford定律不一定是造假, 但值得进一步调查")
+        print("  ⚠️ 首位数分布偏离该筛查阈值，需要结合数据生成机制进一步调查")
+        print("     提示: 偏离不构成人为操纵或欺诈证据，Benford也并非适用于所有数据集")
 
     return {"mad": mad, "chi2": chi2, "conformity": conformity, "is_conforming": is_ok}
 
@@ -284,6 +315,38 @@ def benford_check(values: list):
 # ---------------------------------------------------------------------------
 # 5. Exact Calculator (精确计算器)
 # ---------------------------------------------------------------------------
+
+_CALC_BIN_OPS = {
+    ast.Add: _CTX.add,
+    ast.Sub: _CTX.subtract,
+    ast.Mult: _CTX.multiply,
+    ast.Div: _CTX.divide,
+}
+
+
+def _eval_decimal_expr(expr: str) -> Decimal:
+    """Evaluate the documented arithmetic grammar using Decimal operands."""
+    if len(expr) > 512:
+        raise ValueError("表达式过长")
+
+    tree = ast.parse(expr, mode="eval")
+    if sum(1 for _ in ast.walk(tree)) > 128:
+        raise ValueError("表达式过于复杂")
+
+    def evaluate(node) -> Decimal:
+        if isinstance(node, ast.Expression):
+            return evaluate(node.body)
+        if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)):
+            literal = ast.get_source_segment(expr, node)
+            return Decimal(literal if literal is not None else str(node.value))
+        if isinstance(node, ast.UnaryOp) and isinstance(node.op, (ast.UAdd, ast.USub)):
+            value = evaluate(node.operand)
+            return value if isinstance(node.op, ast.UAdd) else _CTX.minus(value)
+        if isinstance(node, ast.BinOp) and type(node.op) in _CALC_BIN_OPS:
+            return _CALC_BIN_OPS[type(node.op)](evaluate(node.left), evaluate(node.right))
+        raise ValueError("只支持数字、括号和 + - * / 运算")
+
+    return evaluate(tree)
 
 def exact_calc(expr: str):
     """Evaluate a financial expression with exact decimal arithmetic.
@@ -294,20 +357,12 @@ def exact_calc(expr: str):
     print("精确计算 (Exact Calculator)")
     print("=" * 60)
 
-    # Safe evaluation: only allow numbers and arithmetic
-    allowed = set("0123456789.+-*/() eE")
-    if not all(c in allowed for c in expr.replace(" ", "")):
-        print(f"  ❌ 不安全的表达式: {expr}")
-        return None
-
     try:
-        # Replace scientific notation for Decimal compatibility
-        result = eval(expr, {"__builtins__": {}}, {})
-        d_result = exact(result)
+        d_result = _eval_decimal_expr(expr)
         print(f"  表达式: {expr}")
         print(f"  结果:   {fmt_number(d_result)}")
         print(f"  精确值: {d_result}")
-        return float(d_result)
+        return d_result
     except Exception as e:
         print(f"  ❌ 计算错误: {e}")
         return None
@@ -317,7 +372,7 @@ def exact_calc(expr: str):
 # 6. Three-Scenario Valuation (三情景估值)
 # ---------------------------------------------------------------------------
 
-def three_scenario_valuation(current_price, current_eps, shares_billion,
+def three_scenario_valuation(current_price, current_eps,
                              growth_optimistic, growth_neutral, growth_pessimistic,
                              pe_optimistic, pe_neutral, pe_pessimistic,
                              years=3, currency=""):
@@ -328,7 +383,8 @@ def three_scenario_valuation(current_price, current_eps, shares_billion,
 
     p = exact(current_price)
     eps = exact(current_eps)
-    shares = exact(shares_billion)
+    if p <= 0:
+        raise ValueError("当前股价必须大于 0")
 
     scenarios = [
         ("乐观 (Bull)", growth_optimistic, pe_optimistic),
@@ -351,10 +407,10 @@ def three_scenario_valuation(current_price, current_eps, shares_billion,
         for _ in range(years):
             future_eps = _CTX.multiply(future_eps, _CTX.add(Decimal("1"), g))
         target_price = _CTX.multiply(future_eps, target_pe)
-        change = float(target_price - p) / float(p) * 100
+        change = _CTX.multiply(_CTX.divide(target_price - p, p), Decimal("100"))
 
-        print(f"  {name:12} {float(g)*100:>7.0f}% {float(target_pe):>7.0f}x "
-              f"{float(future_eps):>10.2f} {float(target_price):>9.1f} {change:>+7.1f}%")
+        print(f"  {name:12} {g*100:>7.0f}% {target_pe:>7.0f}x "
+              f"{future_eps:>10.2f} {target_price:>9.1f} {change:>+7.1f}%")
 
     print()
     print("  ✅ 所有计算使用精确十进制, 结果可审计复现")
@@ -381,26 +437,26 @@ Examples:
 
     # verify-market-cap
     mc = sub.add_parser("verify-market-cap", help="验算市值 = 股价 × 总股本")
-    mc.add_argument("--price", type=float, required=True)
-    mc.add_argument("--shares", type=float, required=True, help="总股本")
-    mc.add_argument("--reported", type=float, required=True, help="报告市值")
+    mc.add_argument("--price", required=True)
+    mc.add_argument("--shares", required=True, help="总股本")
+    mc.add_argument("--reported", required=True, help="报告市值")
     mc.add_argument("--currency", default="", help="币种")
 
     # verify-valuation
     val = sub.add_parser("verify-valuation", help="验算估值指标")
-    val.add_argument("--price", type=float, required=True)
-    val.add_argument("--eps", type=float, default=None)
-    val.add_argument("--bvps", type=float, default=None, help="每股净资产")
-    val.add_argument("--fcf-per-share", type=float, default=None)
-    val.add_argument("--dividend", type=float, default=None, help="每股股息")
-    val.add_argument("--revenue-per-share", type=float, default=None)
+    val.add_argument("--price", required=True)
+    val.add_argument("--eps", default=None)
+    val.add_argument("--bvps", default=None, help="每股净资产")
+    val.add_argument("--fcf-per-share", default=None)
+    val.add_argument("--dividend", default=None, help="每股股息")
+    val.add_argument("--revenue-per-share", default=None)
 
     # cross-validate
     cv = sub.add_parser("cross-validate", help="多源交叉验证")
     cv.add_argument("--field", required=True, help="数据字段名")
     cv.add_argument("--values", required=True, help="JSON: {来源: 数值}")
     cv.add_argument("--unit", default="")
-    cv.add_argument("--tolerance", type=float, default=2.0, help="容差百分比")
+    cv.add_argument("--tolerance", default="2.0", help="容差百分比")
 
     # benford
     bf = sub.add_parser("benford", help="Benford定律检测")
@@ -412,12 +468,11 @@ Examples:
 
     # three-scenario
     ts = sub.add_parser("three-scenario", help="三情景估值")
-    ts.add_argument("--price", type=float, required=True)
-    ts.add_argument("--eps", type=float, required=True)
-    ts.add_argument("--shares", type=float, required=True, help="总股本(亿)")
-    ts.add_argument("--growth", nargs=3, type=float, required=True,
+    ts.add_argument("--price", required=True)
+    ts.add_argument("--eps", required=True)
+    ts.add_argument("--growth", nargs=3, required=True,
                     help="三情景年增速 (乐观 中性 悲观), 如 0.15 0.08 0.0")
-    ts.add_argument("--pe", nargs=3, type=float, required=True,
+    ts.add_argument("--pe", nargs=3, required=True,
                     help="三情景目标PE, 如 25 20 15")
     ts.add_argument("--years", type=int, default=3)
     ts.add_argument("--currency", default="")
@@ -439,7 +494,7 @@ Examples:
         exact_calc(args.expr)
     elif args.command == "three-scenario":
         three_scenario_valuation(
-            args.price, args.eps, args.shares,
+            args.price, args.eps,
             args.growth[0], args.growth[1], args.growth[2],
             args.pe[0], args.pe[1], args.pe[2],
             args.years, args.currency)

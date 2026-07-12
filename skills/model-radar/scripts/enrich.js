@@ -69,7 +69,6 @@ export function enrichModel(raw) {
     return {
         id: raw.id,
         name: raw.name,
-        description: raw.description,
         created: raw.created,
         context_length: raw.context_length,
         max_completion_tokens: raw.top_provider.max_completion_tokens,
@@ -77,7 +76,7 @@ export function enrichModel(raw) {
         input_modalities: raw.architecture.input_modalities,
         output_modalities: raw.architecture.output_modalities,
         is_moderated: raw.top_provider.is_moderated,
-        is_open_source: raw.hugging_face_id != null,
+        hugging_face_id: raw.hugging_face_id ?? null,
         pricing: calculatePricing(raw.pricing),
         capabilities: extractCapabilities(raw.supported_parameters, raw.architecture.input_modalities, raw.architecture.output_modalities, raw.top_provider.max_completion_tokens, raw.pricing),
         supported_parameters: raw.supported_parameters

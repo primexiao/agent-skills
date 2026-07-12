@@ -1,7 +1,7 @@
 {
   "name": "invest",
-  "version": "1.0.0",
-  "description": "Agent skill: unified investment research (Chinese-language) — stock deep-dives, checklists, portfolio review, earnings, thesis tracking, gold/BTC macro analysis.",
+  "version": "1.1.0",
+  "description": "Agent skill: bilingual investment research — stock deep-dives, checklists, portfolio review, earnings, thesis tracking, and gold/BTC macro analysis.",
   "type": "module",
   "private": true,
   "author": "primexiao",
@@ -29,10 +29,6 @@
     "SKILL.md",
     "references/",
     "tools/",
-    "scripts/",
     "LICENSE.ai-berkshire"
-  ],
-  "scripts": {
-    "self-update": "node scripts/self-update.js"
-  }
+  ]
 }

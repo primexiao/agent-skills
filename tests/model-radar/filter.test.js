@@ -9,6 +9,8 @@ describe("filter", () => {
     assert.equal(matchesRange(10, { min: 5, max: 10 }), true);
     assert.equal(matchesRange(4, { min: 5 }), false);
     assert.equal(matchesRange(11, { max: 10 }), false);
+    assert.equal(matchesRange(Number.NaN, { max: 10 }), false);
+    assert.equal(matchesRange(null, { min: 1 }), false);
   });
 
   it("filters by modality and capability tokens", () => {
@@ -23,9 +25,9 @@ describe("filter", () => {
     );
   });
 
-  it("filters by open source and pricing range", () => {
+  it("filters by Hugging Face listing and pricing range", () => {
     const result = filterModels(sampleModels(), {
-      open_source: true,
+      hugging_face_listed: true,
       price: { max: 1 },
     });
 
