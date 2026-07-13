@@ -9,9 +9,9 @@ runtime payload self-contained, and can be installed independently.
 | Skill | Use it for | Runtime |
 | --- | --- | --- |
 | [`model-radar`](skills/model-radar/SKILL.md) | Filter, compare, and recommend OpenRouter models using price, context, capabilities, rankings, benchmarks, and task-level spend. | Node.js 22+; network on cache refresh |
-| [`research-company`](skills/research-company/SKILL.md) | Evidence-backed company, product, business-model, competitor, and commercial due diligence. | Web research capability |
-| [`invest`](skills/invest/SKILL.md) | Chinese/English securities research, portfolio review, earnings analysis, investment theses, and gold/BTC allocation. | Python 3.10+, `curl`, web research capability |
-| [`topic`](skills/topic/SKILL.md) | Safely initialize, extend, and lint a flat archive of isolated ideas or research topics. | File editing tools |
+| [`research-company`](skills/research-company/SKILL.md) | Evidence-backed company, product, competitor, and commercial due diligence with adaptive perspectives and contradiction tracking. | Web research capability |
+| [`invest`](skills/invest/SKILL.md) | Chinese/English securities research, portfolio review, earnings analysis, narrative-conflict audits, investment theses, and gold/BTC allocation. | Python 3.10+, `curl`, web research capability |
+| [`topic`](skills/topic/SKILL.md) | Capture or multi-perspective explore discussions, and safely initialize or lint a flat topic archive. | File editing tools; optional web research for explore |
 
 `research-company` evaluates the business; `invest` evaluates a security,
 portfolio, valuation, or investment decision. This boundary keeps their

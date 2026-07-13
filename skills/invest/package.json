@@ -1,7 +1,7 @@
 {
   "name": "invest",
-  "version": "1.1.0",
-  "description": "Agent skill: bilingual investment research — stock deep-dives, checklists, portfolio review, earnings, thesis tracking, and gold/BTC macro analysis.",
+  "version": "1.2.0",
+  "description": "Agent skill: bilingual investment research — stock deep-dives, narrative-conflict audits, portfolio review, earnings, thesis tracking, and gold/BTC macro analysis.",
   "type": "module",
   "private": true,
   "author": "primexiao",

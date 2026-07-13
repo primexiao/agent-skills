@@ -1,10 +1,10 @@
 ---
 name: research-company
-description: Research and assess the business behind a company, product, app, brand, project, website, domain, or article URL. Resolve the correct operating and legal entities, establish a company baseline, classify the industry and business model, then apply vertical-specific evidence and metrics. Use for company overviews, product or competitor research, procurement, partnership, employment, market mapping, and commercial due diligence in any language. Do not use when the primary task is stock valuation, a buy/sell decision, portfolio review, or investment interpretation of earnings.
+description: Research and assess the business behind a company, product, app, brand, project, website, domain, or article URL. Resolve the correct operating and legal entities, establish a company baseline, classify the industry and business model, then apply vertical-specific evidence and metrics. Use for company overviews, product or competitor research, conflicting-claim analysis, procurement, partnership, employment, market mapping, and commercial due diligence in any language. Do not use when the primary task is stock valuation, a buy/sell decision, portfolio review, or investment interpretation of earnings.
 license: MIT
 metadata:
   author: primexiao
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Company, Product, and Business Research
@@ -79,6 +79,8 @@ Use the baseline to classify and explain:
 
 Choose one primary industry lens. Add no more than two secondary lenses only when the underlying business genuinely spans industries. Read the relevant sections in [research-framework.md](references/research-framework.md), then build a task-specific question set, metric set, and source plan. When no lens fits exactly, combine lenses with similar value-chain mechanics and unit economics, and explain why.
 
+Build an **adaptive perspective map** with three to five perspectives selected from the actual decision, stakeholders, value chain, and regulatory environment. Do not use a fixed persona list. Each perspective must contribute one distinct question, one falsifiable hypothesis, and one preferred evidence class; drop perspectives that only rename an existing question. Perspectives are question generators, never evidence or simulated authorities.
+
 ### 4. Gather and cross-check evidence iteratively
 
 Use the loop `decompose questions -> gather evidence -> identify conflicts or gaps -> revise questions -> gather again` until the material conclusions are supported or the public evidence limit is explicit.
@@ -97,6 +99,13 @@ Apply these evidence rules:
 - Link directly to the page supporting the claim, not merely to search results, homepages, or aggregators.
 - When sources conflict, show each figure, date, scope, and source; explain which one is used and why.
 - For material claims about licensing, regulation, clinical status, capacity, or market share, prioritize the responsible regulator, exchange, government body, or other primary industry source.
+
+Maintain an internal **contradiction ledger** for claims that could change the decision:
+
+| Claim | Supporting evidence | Conflicting evidence | Scope/date difference | Resolving question | Current judgment |
+| --- | --- | --- | --- | --- | --- |
+
+First test whether an apparent conflict is only a definition, period, geography, or measurement difference. For a genuine unresolved contradiction, pursue the resolving question in the next research loop. Expose only material contradictions in the final output.
 
 ### 5. Analyze both the focus entity and the company
 
@@ -149,7 +158,7 @@ Use the user's language, lead with conclusions, stay concise, and avoid promotio
 7. **Focus product, app, or website analysis:** include when the input is not a company or the user emphasizes a specific product.
 8. **Business model, operating quality, and capital:** separate disclosed data, estimates, and inference.
 9. **Competitive position and moat:** compare three to five relevant entities on identical dimensions; do not pad the list when fewer are relevant.
-10. **Advantages, risks, counterevidence, and unknowns.**
+10. **Advantages, risks, material contradictions, counterevidence, and unknowns.**
 11. **Final judgment and watch signals:** provide a bounded conclusion and three to five indicators that would change it.
 
 Place citations next to the claims they support. For a quick overview, compress sections. For a specialist request, retain entity resolution, the company baseline, and evidence rules while shifting depth toward the requested vertical.
@@ -164,3 +173,5 @@ Place citations next to the claims they support. For a quick overview, compress 
 - Did you avoid treating product, app, or website attention as proof of company revenue, customers, or competitiveness?
 - Did you separate same-layer competitors, traditional substitutes, and upstream or downstream threats?
 - Did you provide counterevidence, risks, evidence gaps, and measurable watch signals?
+- Could an unrepresented stakeholder or missing perspective materially change the conclusion?
+- Does each decision-critical claim have evidence that directly supports it, and does each unresolved contradiction have a resolving question?

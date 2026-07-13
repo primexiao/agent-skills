@@ -30,6 +30,26 @@
         "只创建主题 README，并更新对应 INDEX 行和一条 log",
         "不重构根目录、不读取或修改其他主题目录"
       ]
+    },
+    {
+      "id": 4,
+      "prompt": "/topic explore AI Agent 产品是否应该让用户看到多 Agent 的讨论过程。当前目录已有 INDEX.md，请围绕这个话题发散，但最终要收敛并沉淀。",
+      "expected_output": "路由或创建对应 topic 后进行多视角探索，必要时查证事实，最终收敛并更新话题 README。",
+      "expectations": [
+        "根据话题动态选择能暴露不同假设、约束或利益的视角，不套固定角色列表",
+        "把视角用于生成问题、假设和反例；需要事实支撑时才检索，且不把模拟观点当证据",
+        "把讨论收敛为结论、决策、证据和开放问题，并按既有 session-close 规则沉淀"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "/topic 记录一下：Agent 产品的 onboarding 可能应该从真实任务开始。直接开聊，不需要强制多视角发散。",
+      "expected_output": "按现有默认模式创建或路由话题并继续普通讨论，不自动进入 explore 流程。",
+      "expectations": [
+        "把未识别参数继续视为普通 topic seed，而不是 explore 子命令",
+        "不强制生成多视角、矛盾表或完整研究流程",
+        "保留现有 README、INDEX 和 log 的创建及 session-close 行为"
+      ]
     }
   ]
 }

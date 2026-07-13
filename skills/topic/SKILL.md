@@ -1,10 +1,10 @@
 ---
 name: topic
-description: Initialize or tidy an ideas/topics directory, start a new topic in a flat topic archive, or safely audit/fix archive convention drift. Use for /topic init, /topic IDEA, /topic lint, topic archives, idea vaults, and organizing folders of independent exploratory ideas. An explicit /topic command always means an archive operation. Do not use to generate project task plans, manage issues, or refactor a generic source-code repository.
+description: Initialize or tidy an ideas/topics directory, start or explore a topic in a flat topic archive, or safely audit/fix archive convention drift. Use for /topic init, /topic IDEA, /topic explore, /topic lint, topic archives, idea vaults, and organizing folders of independent exploratory ideas. An explicit /topic command always means a topic-archive workflow. Do not use to generate project task plans, manage issues, or refactor a generic source-code repository.
 license: MIT
 metadata:
   author: primexiao
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # Topic — Flat Topic Archive Workflow
@@ -15,15 +15,17 @@ Usage: `/topic [subcommand] [args]`
 
 ## Subcommand Routing
 
-**Read only the reference file for the chosen subcommand. Do not preload the others.**
+**Read only the reference file or files for the chosen subcommand. Do not preload the others.**
 
 | Subcommand | Scenario | Read |
 |---|---|---|
 | `init [dir]` | Initialize/tidy an existing directory (defaults to cwd) | `<skill_dir>/references/init.md` |
 | `lint` | Check and fix convention drift in an initialized archive | `<skill_dir>/references/lint.md` |
+| `explore [seed]` | Start or route a topic, then discuss it with adaptive perspectives | `<skill_dir>/references/new-topic.md` + `<skill_dir>/references/explore.md` |
 | (bare / anything else) | Start a new topic; `/topic <one-liner>` seeds it | `<skill_dir>/references/new-topic.md` |
 
 Any input that is not a recognized subcommand is treated as "start a new topic" with the input text as the topic seed.
+Default mode does not force divergence or the explore workflow; ordinary topic discussion remains ordinary discussion.
 
 ## Shared Rules
 

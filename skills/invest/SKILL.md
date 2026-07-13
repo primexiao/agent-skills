@@ -1,10 +1,10 @@
 ---
 name: invest
-description: Analyze investments and support decisions for stocks (A-share, H-share, and US), portfolios, earnings, investment theses, gold, and BTC. Use for /invest, stock valuation or buy/sell decisions, portfolio review, investor-focused earnings analysis, position sizing, and gold or crypto allocation/market-cycle questions in Chinese or English. 也适用于投研、组合体检、财报精读、投资论文、金价和币价周期。 Do not use for general company, product, competitor, procurement, or partnership research without an investment decision.
+description: Analyze investments and support decisions for stocks (A-share, H-share, and US), portfolios, earnings, investment theses, gold, and BTC. Use for /invest, stock valuation or buy/sell decisions, portfolio review, investor-focused earnings or narrative-conflict analysis, position sizing, and gold or crypto allocation/market-cycle questions in Chinese or English. 也适用于投研、组合体检、财报精读、投资论文、金价和币价周期。 Do not use for general company, product, competitor, procurement, or partnership research without an investment decision.
 license: MIT
 metadata:
   author: primexiao
-  version: "1.1.0"
+  version: "1.2.0"
   upstream: xbtlin/ai-berkshire (MIT)
 ---
 
@@ -18,10 +18,10 @@ metadata:
 
 | 子命令 | 场景 | 读取 |
 |--------|------|------|
-| `research <标的>` | 个股深度研究（四大师七步） | `references/research.md` |
+| `research <标的>` | 个股深度研究（四大师七步） | `references/research.md` + `references/narrative-conflicts.md` |
 | `check <标的...>` | 买入前快筛（六关+镜子测试，支持多标的） | `references/checklist.md` |
 | `portfolio <持仓>` | 组合审视（支持股票+黄金+BTC混合持仓） | `references/portfolio.md` |
-| `earnings <标的> [期间]` | 财报精读 | `references/earnings.md` |
+| `earnings <标的> [期间]` | 财报精读 | `references/earnings.md` + `references/narrative-conflicts.md` |
 | `thesis <标的>` | 投资论文建立/季度追踪 | `references/thesis.md` |
 | `gold` / `btc` | 黄金/BTC 宏观分析 | `references/macro.md` |
 | `data <代码\|gold\|btc>` | 只取数不分析 | 直接调 tools（见下） |

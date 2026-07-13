@@ -5,6 +5,18 @@ each `SKILL.md` and, when present, its `package.json`.
 
 ## Unreleased
 
+### topic 1.2.0
+
+- Added an explicit `explore` mode for adaptive multi-perspective discussion, optional evidence-backed research, convergence, and normal topic persistence while preserving default topic behavior.
+
+### research-company 1.1.0
+
+- Added decision-specific perspective maps, contradiction ledgers, and evidence-coverage audits for deeper research without treating simulated personas as sources.
+
+### invest 1.2.0
+
+- Added a shared investment-narrative conflict audit for deep research and earnings analysis, including scope reconciliation and observable resolving signals.
+
 ### Repository
 
 - Added Agent Skills/spec validation, routing and behavior eval corpora, CI,

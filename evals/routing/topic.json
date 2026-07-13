@@ -2,6 +2,8 @@
   { "query": "/topic init ./ideas", "should_trigger": true },
   { "query": "Start a new topic in my idea archive for local-first agents.", "should_trigger": true },
   { "query": "/topic lint report only; don't fix anything.", "should_trigger": true },
+  { "query": "/topic explore whether AI agents should expose their internal multi-agent discussion", "should_trigger": true },
+  { "query": "用 topic explore 模式发散讨论本地优先 Agent 的产品机会。", "should_trigger": true },
   { "query": "Turn these independent idea folders into a flat topic vault with an index.", "should_trigger": true },
   { "query": "Create a two-week engineering sprint plan with owners and due dates.", "should_trigger": false },
   { "query": "Set up GitHub Issues and a project board for this repository.", "should_trigger": false },

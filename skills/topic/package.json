@@ -1,7 +1,7 @@
 {
   "name": "topic",
-  "version": "1.1.0",
-  "description": "Agent skill: turn any directory into a flat topic archive — one isolated subdirectory per topic, with a thin INDEX/log knowledge layer at the root.",
+  "version": "1.2.0",
+  "description": "Agent skill: capture and explore discussions in a flat topic archive with an INDEX/log knowledge layer.",
   "type": "module",
   "private": true,
   "author": "primexiao",

@@ -30,6 +30,26 @@
         "Verifies entity identity and material claims through independent authoritative sources",
         "States when the supplied page or public evidence is insufficient for a credibility judgment"
       ]
+    },
+    {
+      "id": 4,
+      "prompt": "Evaluate an enterprise AI vendor whose website claims strong adoption and security, while customer reports, status history, and regulatory records point in different directions. Identify the most decision-relevant contradictions and what evidence would resolve them.",
+      "expected_output": "A source-backed vendor assessment that uses decision-specific perspectives to expose and resolve material contradictions.",
+      "expectations": [
+        "Uses adaptive stakeholder perspectives relevant to enterprise procurement rather than a fixed generic persona list",
+        "Treats perspectives as question generators and relies on external evidence for conclusions",
+        "Records material conflicting claims with scope, date, evidence strength, and a resolving question"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Research a pre-revenue nuclear-fusion tooling startup for a partnership decision. Do not force generic practitioner, academic, economist, or historian roles; determine which perspectives and missing evidence actually matter.",
+      "expected_output": "A bounded partnership assessment with task-specific research perspectives, explicit blind spots, and falsifiable unknowns.",
+      "expectations": [
+        "Selects perspectives from the startup's value chain, stakeholders, regulatory context, and decision rather than a fixed template",
+        "For each selected perspective defines a distinct question, falsifiable hypothesis, and preferred evidence class",
+        "Audits whether an unrepresented stakeholder or unsupported claim could change the conclusion"
+      ]
     }
   ]
 }
