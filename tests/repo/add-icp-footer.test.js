@@ -19,6 +19,8 @@ test("ICP skill preserves the supplied number and uses a visible fallback placeh
 
   assert.match(source, /https:\/\/beian\.miit\.gov\.cn\//);
   assert.match(source, /use.*exactly|verbatim/i);
-  assert.match(source, /YOUR_ICP_FILING_NUMBER/);
+  assert.match(source, /YOUR_ICP_NUMBER/);
+  assert.doesNotMatch(source, /YOUR_ICP_FILING_NUMBER/);
   assert.match(source, /replace.*placeholder/i);
+  assert.match(source, /例如：浙ICP备123456号-1/);
 });

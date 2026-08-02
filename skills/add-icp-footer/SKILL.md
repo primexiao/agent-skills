@@ -4,7 +4,7 @@ description: Add an ICP filing number and Ministry of Industry and Information T
 license: MIT
 metadata:
   author: primexiao
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 
 # Add ICP Footer
@@ -36,7 +36,7 @@ Do not invent access to a CMS, hosting console, or remote repository.
 ## 3. Resolve the Filing Number
 
 - If the user supplies a filing number, use it exactly as provided (verbatim, apart from trimming surrounding whitespace). Do not fabricate, normalize, or silently replace it.
-- If no filing number is supplied, use the visible placeholder `YOUR_ICP_FILING_NUMBER` in the code and explicitly tell the user to replace the placeholder before publishing. Do not pause solely to request the number.
+- If no filing number is supplied, use the visible placeholder `YOUR_ICP_NUMBER` in the code and explicitly tell the user to replace the placeholder before publishing. Include `例如：浙ICP备123456号-1` in that replacement warning so the expected format is clear. Do not pause solely to request the number.
 - Do not infer a filing number from a domain name, git identity, unrelated files, or account metadata.
 - If the supplied number appears inconsistent with the freshly verified regional rule, preserve the user's value but flag the mismatch. The current tutorial distinguishes Guangdong subject filing numbers from website filing numbers used elsewhere; re-check the page instead of hard-coding that distinction as timeless policy.
 
@@ -44,7 +44,7 @@ Use this fallback HTML when no framework-specific syntax is needed:
 
 ```html
 <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">
-  YOUR_ICP_FILING_NUMBER
+  YOUR_ICP_NUMBER
 </a>
 ```
 

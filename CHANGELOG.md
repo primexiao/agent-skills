@@ -5,6 +5,11 @@ each `SKILL.md` and, when present, its `package.json`.
 
 ## Unreleased
 
+### add-icp-footer 1.0.1
+
+- Shortened the missing-number placeholder to `YOUR_ICP_NUMBER` and required
+  replacement warnings to include `例如：浙ICP备123456号-1` as a format example.
+
 ### create-mindmap-outline 1.0.0
 
 - Added strict single-block, literal-Tab mind-map serialization; content

@@ -8,7 +8,7 @@ runtime payload self-contained, and can be installed independently.
 
 | Skill | Use it for | Runtime |
 | --- | --- | --- |
-| [`add-icp-footer`](skills/add-icp-footer/SKILL.md) | Add a current, correctly linked ICP filing number to a website footer by editing the local site or returning an appropriate snippet. | File editing tools; web access to refresh official requirements |
+| [`add-icp-footer`](skills/add-icp-footer/SKILL.md) | Add a current, correctly linked ICP filing number to a website footer, with a clear placeholder and format example when the number is unknown. | File editing tools; web access to refresh official requirements |
 | [`create-mindmap-outline`](skills/create-mindmap-outline/SKILL.md) | Compress conversations, notes, and documents into a single paste-ready Tab-indented mind-map outline with strict depth, node, and leaf limits. | Optional Python 3.10+ validation helper |
 | [`model-radar`](skills/model-radar/SKILL.md) | Filter, compare, and recommend OpenRouter models using price, context, capabilities, rankings, benchmarks, and task-level spend. | Node.js 22+; network on cache refresh |
 | [`resolve-x-user-id`](skills/resolve-x-user-id/SKILL.md) | Resolve an X/Twitter account between its current username and stable numeric user ID. | Python 3.10+, `curl`; web or browser access |

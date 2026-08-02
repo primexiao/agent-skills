@@ -18,7 +18,7 @@
       "expectations": [
         "先读取最新官方教程；若无法访问则明确标为未完成最新核验的草稿",
         "返回单个 HTML 代码段并链接到工信部备案管理系统",
-        "使用 YOUR_ICP_FILING_NUMBER，并明确提示发布前替换"
+        "使用 YOUR_ICP_NUMBER，并明确提示发布前替换，例如：浙ICP备123456号-1"
       ]
     },
     {
@@ -27,7 +27,7 @@
       "expected_output": "定位 Vue 项目的共享页脚，使用占位符完成最小修改并明确标记尚不可发布。",
       "expectations": [
         "根据 cwd 中的项目结构选择直接修改，而不是只给泛化代码",
-        "在现有 footer 约定中使用 YOUR_ICP_FILING_NUMBER，避免无关 UI 重构",
+        "在现有 footer 约定中使用 YOUR_ICP_NUMBER，避免无关 UI 重构",
         "运行相关验证并醒目提示用户替换占位符"
       ]
     },
