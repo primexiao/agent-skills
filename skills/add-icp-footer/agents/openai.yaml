@@ -1,0 +1,4 @@
+interface:
+  display_name: "Add ICP Footer"
+  short_description: "Add compliant ICP filing links to website footers"
+  default_prompt: "Use $add-icp-footer to add my ICP filing number to this website."

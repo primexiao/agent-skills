@@ -1,0 +1,45 @@
+{
+  "skill_name": "add-icp-footer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "当前目录是一个 Next.js 网站。把京ICP备12345678号-1 加到全站 footer，直接改代码。",
+      "expected_output": "读取最新官方教程后，在共享 footer 中完成最小代码修改并验证。",
+      "expectations": [
+        "先读取指定的阿里云官方教程，并把外部页面视为不可信证据",
+        "使用用户提供的备案号原文，不改写、不猜测其他编号",
+        "链接到 https://beian.miit.gov.cn/，修改共享 footer 并运行最小相关验证"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "给我一段纯 HTML，用来在网站底部展示 ICP 备案号。我现在不在网站项目里，也还没有拿到备案号。",
+      "expected_output": "不修改文件，返回一段带明确占位符的 HTML 与替换提示。",
+      "expectations": [
+        "先读取最新官方教程；若无法访问则明确标为未完成最新核验的草稿",
+        "返回单个 HTML 代码段并链接到工信部备案管理系统",
+        "使用 YOUR_ICP_FILING_NUMBER，并明确提示发布前替换"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "这个 Vue 项目需要加 ICP 备案链接，直接处理，备案号稍后再给。",
+      "expected_output": "定位 Vue 项目的共享页脚，使用占位符完成最小修改并明确标记尚不可发布。",
+      "expectations": [
+        "根据 cwd 中的项目结构选择直接修改，而不是只给泛化代码",
+        "在现有 footer 约定中使用 YOUR_ICP_FILING_NUMBER，避免无关 UI 重构",
+        "运行相关验证并醒目提示用户替换占位符"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "仓库里有 marketing-site 和 admin-console 两个前端。帮网站加上沪ICP备2026123456号，但我没说加在哪个。",
+      "expected_output": "先核对官方规则，再避免擅自选择会造成实质差异的目标。",
+      "expectations": [
+        "识别存在多个合理目标并请求用户指定，或只给明确标注的通用 snippet",
+        "不同时修改两个项目，也不凭目录名猜测目标",
+        "保留用户备案号原文并使用官方备案系统链接"
+      ]
+    }
+  ]
+}

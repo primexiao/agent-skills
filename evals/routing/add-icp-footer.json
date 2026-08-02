@@ -1,0 +1,12 @@
+[
+  { "query": "给这个网站 footer 加上京ICP备12345678号-1。", "should_trigger": true },
+  { "query": "Add our ICP filing number and MIIT link to this Next.js site.", "should_trigger": true },
+  { "query": "给我一段展示 ICP备案号 的 HTML。", "should_trigger": true },
+  { "query": "备案号已经有了，帮我挂到网站底部并链接工信部。", "should_trigger": true },
+  { "query": "修一下页脚里错误的 ICP 备案链接。", "should_trigger": true },
+  { "query": "如何申请 ICP 备案？", "should_trigger": false },
+  { "query": "帮我查询这个域名的备案申请进度。", "should_trigger": false },
+  { "query": "在网站底部添加公安联网备案号。", "should_trigger": false },
+  { "query": "给 landing page 加版权声明和隐私政策链接。", "should_trigger": false },
+  { "query": "设计一个通用 React Footer 组件。", "should_trigger": false }
+]

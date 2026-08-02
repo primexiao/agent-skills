@@ -30,6 +30,13 @@
       "skills": [
         "topic"
       ]
+    },
+    {
+      "title": "Website Compliance",
+      "description": "Apply website-facing regulatory display requirements.",
+      "skills": [
+        "add-icp-footer"
+      ]
     }
   ]
 }
