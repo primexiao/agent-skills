@@ -26,13 +26,17 @@ Unless the user overrides a constraint, apply all of these rules:
 The payload must look like this; the indentation shown inside the block uses literal Tabs:
 
 ```text
-Agent Harness 与云端执行
-	权限与隔离
-		Pi 默认无内置隔离，需要外部沙箱兜底
-	本地执行
-		Codex 与 Claude Code 可直接修改宿主机授权范围内的文件
-	云端执行
-		任务运行在托管隔离环境，不能自动访问本机配置
+Community Garden Project
+	Goals
+		Grow seasonal vegetables for local residents
+		Reduce neighborhood food waste through composting
+	Planning
+		Site Preparation
+			Test the soil and install raised beds
+		Volunteer Schedule
+			Assign weekly watering and maintenance shifts
+	Risks
+		Limited water access during summer
 ```
 
 ## Workflow
