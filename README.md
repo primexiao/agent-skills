@@ -1,6 +1,6 @@
 # Agent Skills
 
-Four focused, portable skills for AI coding agents. Each skill follows the
+Five focused, portable skills for AI coding agents. Each skill follows the
 [Agent Skills specification](https://agentskills.io/specification), keeps its
 runtime payload self-contained, and can be installed independently.
 
@@ -9,6 +9,7 @@ runtime payload self-contained, and can be installed independently.
 | Skill | Use it for | Runtime |
 | --- | --- | --- |
 | [`model-radar`](skills/model-radar/SKILL.md) | Filter, compare, and recommend OpenRouter models using price, context, capabilities, rankings, benchmarks, and task-level spend. | Node.js 22+; network on cache refresh |
+| [`resolve-x-user-id`](skills/resolve-x-user-id/SKILL.md) | Resolve an X/Twitter account between its current username and stable numeric user ID. | Python 3.10+, `curl`; web or browser access |
 | [`research-company`](skills/research-company/SKILL.md) | Evidence-backed company, product, competitor, and commercial due diligence with adaptive perspectives and contradiction tracking. | Web research capability |
 | [`invest`](skills/invest/SKILL.md) | Chinese/English securities research, portfolio review, earnings analysis, narrative-conflict audits, investment theses, and gold/BTC allocation. | Python 3.10+, `curl`, web research capability |
 | [`topic`](skills/topic/SKILL.md) | Capture or multi-perspective explore discussions, and safely initialize or lint a flat topic archive. | File editing tools; optional web research for explore |
@@ -31,7 +32,7 @@ Install one skill:
 npx skills add primexiao/agent-skills --skill model-radar
 ```
 
-Install all four:
+Install all five:
 
 ```bash
 npx skills add primexiao/agent-skills

@@ -1,0 +1,12 @@
+[
+  { "query": "查一下 @OpenAI 对应的 X numeric user ID。", "should_trigger": true },
+  { "query": "这个 Twitter user ID 现在对应哪个 username？", "should_trigger": true },
+  { "query": "把 https://x.com/i/user/44196397 转成当前 profile URL。", "should_trigger": true },
+  { "query": "这个账号改过 handle，确认它还是不是之前那个 numeric ID。", "should_trigger": true },
+  { "query": "Resolve twitter.com/OpenAI to its stable account ID.", "should_trigger": true },
+  { "query": "总结一下这个 X 账号最近发的推文。", "should_trigger": false },
+  { "query": "帮我在 X 上发一条产品更新。", "should_trigger": false },
+  { "query": "搜索讨论 AI agents 的热门推文。", "should_trigger": false },
+  { "query": "分析这个 Twitter 账号的粉丝画像。", "should_trigger": false },
+  { "query": "打开我已经知道的 https://x.com/OpenAI。", "should_trigger": false }
+]

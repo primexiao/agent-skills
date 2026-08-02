@@ -10,6 +10,13 @@
       ]
     },
     {
+      "title": "Identity Utilities",
+      "description": "Resolve mutable social handles to stable account identifiers.",
+      "skills": [
+        "resolve-x-user-id"
+      ]
+    },
+    {
       "title": "Research & Decisions",
       "description": "Research businesses, securities, portfolios, and investment decisions.",
       "skills": [

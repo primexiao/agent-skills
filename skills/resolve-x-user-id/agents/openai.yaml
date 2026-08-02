@@ -1,0 +1,4 @@
+interface:
+  display_name: "Resolve X User ID"
+  short_description: "Resolve X/Twitter usernames and numeric user IDs"
+  default_prompt: "Use $resolve-x-user-id to resolve this X account between its current username and numeric user ID."

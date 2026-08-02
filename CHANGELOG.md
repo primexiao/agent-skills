@@ -5,6 +5,11 @@ each `SKILL.md` and, when present, its `package.json`.
 
 ## Unreleased
 
+### resolve-x-user-id 1.0.0
+
+- Added username, numeric ID, and profile URL normalization; X-owned public
+  lookup routes; browser fallback; and explicit identity-verification rules.
+
 ### topic 1.2.0
 
 - Added an explicit `explore` mode for adaptive multi-perspective discussion, optional evidence-backed research, convergence, and normal topic persistence while preserving default topic behavior.
