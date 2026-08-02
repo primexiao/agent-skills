@@ -5,6 +5,12 @@ each `SKILL.md` and, when present, its `package.json`.
 
 ## Unreleased
 
+### create-mindmap-outline 1.0.0
+
+- Added strict single-block, literal-Tab mind-map serialization; content
+  compression defaults; format repair; deterministic validation; and routing
+  and behavior evals.
+
 ### resolve-x-user-id 1.0.0
 
 - Added username, numeric ID, and profile URL normalization; X-owned public

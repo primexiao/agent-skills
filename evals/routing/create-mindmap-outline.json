@@ -1,0 +1,12 @@
+[
+  { "query": "总结成方便粘贴到思维导图的 Markdown。", "should_trigger": true },
+  { "query": "把这些笔记整理成 XMind 可直接粘贴的 Tab 层级大纲。", "should_trigger": true },
+  { "query": "压缩成不超过四级、30 个节点的思维导图格式。", "should_trigger": true },
+  { "query": "这个 tab-indented mind-map outline 格式坏了，帮我修复。", "should_trigger": true },
+  { "query": "只保留重要信息，给我一个幕布能识别的缩进大纲。", "should_trigger": true },
+  { "query": "用 Mermaid mindmap 画一张思维导图。", "should_trigger": false },
+  { "query": "导出一个可导入 XMind 的 .xmind 文件。", "should_trigger": false },
+  { "query": "请用标准 Markdown 无序列表总结。", "should_trigger": false },
+  { "query": "把这份文档转换成 OPML。", "should_trigger": false },
+  { "query": "总结一下这次会议的结论和待办。", "should_trigger": false }
+]

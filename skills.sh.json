@@ -26,9 +26,10 @@
     },
     {
       "title": "Knowledge Workflows",
-      "description": "Keep idea and research archives organized over time.",
+      "description": "Structure knowledge for reusable archives and mind maps.",
       "skills": [
-        "topic"
+        "topic",
+        "create-mindmap-outline"
       ]
     },
     {

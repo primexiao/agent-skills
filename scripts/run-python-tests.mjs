@@ -25,4 +25,6 @@ function run(python, args) {
 
 const python = findPython();
 run(python, ["-m", "compileall", "-q", "skills/invest/tools"]);
+run(python, ["-m", "compileall", "-q", "skills/create-mindmap-outline/scripts"]);
+run(python, ["-m", "unittest", "discover", "-s", "tests/create-mindmap-outline", "-p", "test_*.py"]);
 run(python, ["-m", "unittest", "discover", "-s", "tests/invest", "-p", "test_*.py"]);

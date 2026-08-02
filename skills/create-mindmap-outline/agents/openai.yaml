@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create Mind Map Outline"
+  short_description: "把内容压缩成可直接粘贴的 Tab 层级思维导图大纲"
+  default_prompt: "Use $create-mindmap-outline to turn this content into a concise, paste-ready mind-map outline."
